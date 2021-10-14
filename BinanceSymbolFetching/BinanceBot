@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import time
+import json
 import sqlalchemy
 import sys, getopt
 import pandas as pd
@@ -10,37 +11,60 @@ from datetime import datetime
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
-# Taking all arguments of the program to parse -h and -s options.
+# Making sure that the symbol in the configuration file is valid for Binance
+
+def parse_symbol(symbol):
+    res = rq.get(url_binance_ticker_price + symbol).json()
+    if 'msg' in res:
+        print(symbol + ' is not valid for BinanceBot check your configuration file')
+        print(res["msg"])
+        print("Return Code : " + str(res["code"]))
+        sys.exit(1)
+    elif symbol == "":
+        print(symbol + ' is not valid for BinanceBot check your configuration file')
+        sys.exit(1)
+    return symbol
+
+# Parsing all symbols in the configuration file with JSON format
+
+def parse_config_file(config_file):
+    try:
+        conf_fd = open(config_file,)
+    except IOError:
+        print ("Error: can't open " + config_file)
+        sys.exit(1)
+    try:
+        config_object = json.load(conf_fd)
+    except ValueError as e:
+        print (config_file + " is not a valid config file")
+        sys.exit(1)
+    symbols = []
+    for symbol in config_object['symbols']:
+        symbols.append(parse_symbol(symbol['symbol']))
+    return symbols
+
+# Taking all arguments of the program to parse -h and -f options.
 # Making sure that the use is sending valid input and valid symbol.
 
 def parse_entry(argv):
-    symbol = "error"
+    config_file = ""
     try:
-        opts, args = getopt.getopt(argv, "hs:", ["help", "symbol="])
+        opts, args = getopt.getopt(argv, "hf:", ["help", "file="])
     except getopt.GetoptError:
-        print ('python3 ' + bot + ' -s <symbol> or --symbol=<symbol>')
+        print ('python3 ' + bot + ' -f <file> or --file=<file>')
         print ('python3 ' + bot + ' -h or --help')
         sys.exit(1)
     if len(opts) <= 0:
-        print ('python3 ' + bot + ' -s <symbol> or --symbol=<symbol>')
+        print ('python3 ' + bot + ' -f <file> or --file=<file>')
         print ('python3 ' + bot + ' -h or --help')
         sys.exit(1)
     for opt, arg in opts:
         if opt in ('-h', '--help'):
-            print ('python3 ' + bot + ' -s <symbol> or --symbol=<symbol>')
+            print ('python3 ' + bot + ' -f <file> or --file=<file>')
             sys.exit(0)
-        elif opt in ('-s', '--symbol'):
-            symbol = arg
-    res = rq.get(url_binance_ticker_price + symbol).json()
-    if 'msg' in res:
-        print('Symbol is not valid for BinanceBot check your parameters')
-        print(res["msg"])
-        print("Return Code : " + str(res["code"]))
-        sys.exit(1)
-    elif symbol == "error" or symbol == "":
-        print('Symbol is not valid for BinanceBot check your parameters')
-        sys.exit(1)
-    return symbol
+        elif opt in ('-f', '--file'):
+            config_file = arg
+    return parse_config_file(config_file)
 
 # Reformate the json response "res" to a pandas DataFrame 
 
@@ -55,8 +79,8 @@ def create_frame(res):
 
 
 if __name__ == "__main__":
-    symbol = parse_entry(sys.argv[1:])
-    print(symbol)
+    symbols = parse_entry(sys.argv[1:])
+    print(symbols)
     #engine = sqlalchemy.create_engine('sqlite:///SQLiteDB/' + symbol + 'stream.db')
     #while True:
         #res = rq.get("https://api.binance.com/api/v3/ticker/price?symbol=" + symbol).json()
