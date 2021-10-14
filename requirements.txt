@@ -6,7 +6,6 @@ attrs==21.2.0
 backports.zoneinfo==0.2.1
 binance==0.3
 blessed==1.17.6
-catfish
 certifi==2021.10.8
 chardet==4.0.0
 charset-normalizer==2.0.7
