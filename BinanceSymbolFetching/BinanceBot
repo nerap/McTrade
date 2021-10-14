@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
+import time
+import sqlalchemy
 import sys, getopt
 import pandas as pd
 import requests as rq
 from datetime import datetime
-import time
-import sqlalchemy
 
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
