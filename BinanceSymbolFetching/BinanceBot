@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 
+import os
 import time
 import json
+import _thread
 import sqlalchemy
 import sys, getopt
 import pandas as pd
 import requests as rq
 from datetime import datetime
 
+SQLite_dir = 'SQLiteDB'
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
@@ -93,13 +96,32 @@ def create_frame(res):
     df.Time = pd.to_datetime(int(time.time() * 1000), unit="ms")
     return (df)
 
+def storing_price_symbol(symbol):
+    engine = sqlalchemy.create_engine('sqlite:///SQLiteDB/' + symbol + 'stream.db')
+    while True:
+        res = rq.get("https://api.binance.com/api/v3/ticker/price?symbol=" + symbol).json()
+        data_frame = create_frame(res)
+        data_frame.to_sql(symbol, engine, if_exists='append', index=False)
+        print(data_frame)
+
+def fetching_symbols(symbols):
+    if not os.path.exists(SQLite_dir):
+        os.makedirs(SQLite_dir)
+    else:
+        for f in os.listdir(SQLite_dir):
+            os.remove(os.path.join(SQLite_dir, f))
+    
+    for symbol in symbols:
+        try:
+            _thread.start_new_thread( storing_price_symbol, (symbol , ))
+        except ValueError as e:
+            print('Error: Thread unable to start')
+            sys.exit(1)
+    while True:
+        time.sleep(0.100)
+        pass
+    print('Every thread is working')
 
 if __name__ == "__main__":
     symbols = parse_entry(sys.argv[1:])
-    print(symbols)
-    #engine = sqlalchemy.create_engine('sqlite:///SQLiteDB/' + symbol + 'stream.db')
-    #while True:
-        #res = rq.get("https://api.binance.com/api/v3/ticker/price?symbol=" + symbol).json()
-        #data_frame = create_frame(res)
-        #data_frame.to_sql(symbol, engine, if_exists='append', index=False)
-        #print(data_frame)
+    fetching_symbols(symbols)
