@@ -10,7 +10,6 @@ import sqlalchemy
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
-
 # Taking all arguments of the program to parse -h and -s options.
 # Making sure that the use is sending valid input and valid symbol.
 
