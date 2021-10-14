@@ -25,7 +25,7 @@ def parse_entry(argv):
         sys.exit(1)
     for opt, arg in opts:
         if opt in ('-h', '--help'):
-            print ('python3 BinanceBot -s <symbol>')
+            print ('python3 BinanceBot -s <symbol> or --symbol=<symbol>')
             sys.exit(0)
         elif opt in ('-s', '--symbol'):
             symbol = arg
