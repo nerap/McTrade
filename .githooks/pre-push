@@ -9,11 +9,11 @@ message="There is something wrong with your branch name. Branch names in this pr
     \ $valid_branch_regex. Your commit will be rejected. 
     \ You need to rename your branch to a valid name if you want to push."
 
-if [[ ! $local_branch =~ $valid_branch_regex ]]
-then
-    echo "$message"
-    exit 1
-fi
+#if [[ ! $local_branch =~ $valid_branch_regex ]]
+#then
+#    echo "$message"
+#    exit 1
+#fi
 
-exit 0
+#exit 0
 
