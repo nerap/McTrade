@@ -19,6 +19,7 @@ jobs:
       with:
         python-version: 3.8
     - name: install
+      run: |
         pip3 -r requirement.txt
     - name: test
       run: |
