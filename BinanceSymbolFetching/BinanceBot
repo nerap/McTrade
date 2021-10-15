@@ -9,6 +9,7 @@ import sys, getopt
 import pandas as pd
 import requests as rq
 from datetime import datetime
+from dotenv import load_dotenv
 
 SQLite_dir = 'SQLiteDB/'
 bot = sys.argv[0]
@@ -126,5 +127,6 @@ def fetching_symbols(symbols):
     print('Every thread is working')
 
 if __name__ == "__main__":
+    load_dotenv()
     symbols = parse_entry(sys.argv[1:])
     fetching_symbols(symbols)
