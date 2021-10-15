@@ -1,2 +1,2 @@
 #  BinanceBot
-Bot exploiting Binance API with Python 3
+Bot exploiting Binance API with Python 3 and SQLite

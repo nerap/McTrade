@@ -2,7 +2,8 @@ import io
 import unittest
 import subprocess
 
-main_name = "BinanceBot"
+directory = "BinanceSymbolFetching/"
+main_name = directory + "configuration_file_parsing.py"
 
 class TestBasicConfigFile(unittest.TestCase):
 
@@ -26,38 +27,38 @@ class TestBasicConfigFile(unittest.TestCase):
         comp_stdout = str.encode('Error: configuration file missing\n')
         self.assertEqual(main_stdout, comp_stdout)
 
-    #def test_basic_config_file_04(self):
-    #    main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_valid'], stdout=subprocess.PIPE).stdout
-    #    comp_stdout = str.encode('[\'BTCUSDT\', \'LINKBTC\', \'BTCBUSD\']\n')
-    #    self.assertEqual(main_stdout, comp_stdout)
+    def test_basic_config_file_04(self):
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_valid'], stdout=subprocess.PIPE).stdout
+        comp_stdout = str.encode('[\'BTCUSDT\', \'LINKBTC\', \'BTCBUSD\']\n')
+        self.assertEqual(main_stdout, comp_stdout)
     
     def test_basic_config_file_05(self):
-        main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_duplicate'], stdout=subprocess.PIPE).stdout
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_duplicate'], stdout=subprocess.PIPE).stdout
         comp_stdout = str.encode('Error: duplicated symbol BTCUSDT in configuration file\n')
         self.assertEqual(main_stdout, comp_stdout)
 
     def test_basic_config_file_06(self):
-        main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_empty'], stdout=subprocess.PIPE).stdout
-        comp_stdout = str.encode('test/test_config_file/config_file_empty is not a valid config file\n')
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_empty'], stdout=subprocess.PIPE).stdout
+        comp_stdout = str.encode(directory + 'test/test_config_file/config_file_empty is not a valid config file\n')
         self.assertEqual(main_stdout, comp_stdout)
 
     def test_basic_config_file_07(self):
-        main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_empty_symbols'], stdout=subprocess.PIPE).stdout
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_empty_symbols'], stdout=subprocess.PIPE).stdout
         comp_stdout = str.encode('Error: your configuration file is empty\n')
         self.assertEqual(main_stdout, comp_stdout)
     
     def test_basic_config_file_08(self):
-        main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_json_empty'], stdout=subprocess.PIPE).stdout
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_json_empty'], stdout=subprocess.PIPE).stdout
         comp_stdout = str.encode('Error: configuration file doesn\'t have the right key\n')
         self.assertEqual(main_stdout, comp_stdout)
 
     def test_basic_config_file_09(self):
-        main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_wrong_format'], stdout=subprocess.PIPE).stdout
-        comp_stdout = str.encode('test/test_config_file/config_file_wrong_format is not a valid config file\n')
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_wrong_format'], stdout=subprocess.PIPE).stdout
+        comp_stdout = str.encode(directory + 'test/test_config_file/config_file_wrong_format is not a valid config file\n')
         self.assertEqual(main_stdout, comp_stdout)
 
     def test_basic_config_file_09(self):
-        main_stdout = subprocess.run(['python3', main_name, '--file=test/test_config_file/config_file_wrong_key'], stdout=subprocess.PIPE).stdout
+        main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_wrong_key'], stdout=subprocess.PIPE).stdout
         comp_stdout = str.encode('Error: configuration file doesn\'t have the right key\n')
         self.assertEqual(main_stdout, comp_stdout)
 
