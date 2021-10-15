@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+
+import os
+import sys
+from dotenv import load_dotenv
+from BinanceSymbolFetching import configuration_file_parsing as cfp
+from BinanceSymbolFetching import fetching_symbols as fs
+
+if __name__ == "__main__":
+    load_dotenv()
+    symbols = cfp.parse_entry(sys.argv[1:])
+    fs.fetching_symbols(symbols)

@@ -19,10 +19,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.6
-    - name: install dependencies
+    - name: workflow
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: test
-      run: |
-        cd BinanceSymbolFetching && python3 -m unittest test/*test.py
+        make workflow
