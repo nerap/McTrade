@@ -4,6 +4,8 @@ on:
   release:
     types: [created]
   push:
+    branches: [ test ]
+  push:
     branches: [ main ]
   pull_request:
     branches: [ main ]

@@ -96,6 +96,8 @@ def create_frame(res):
     df.Time = pd.to_datetime(int(time.time() * 1000), unit="ms")
     return (df)
 
+# Transforming DataFrame into SQLite data
+
 def storing_price_symbol(symbol):
     engine = sqlalchemy.create_engine('sqlite:///SQLiteDB/' + symbol + 'stream.db')
     while True:
@@ -104,13 +106,14 @@ def storing_price_symbol(symbol):
         data_frame.to_sql(symbol, engine, if_exists='append', index=False)
         print(data_frame)
 
+# Starting a Thread for each symbol in the configuration file
+
 def fetching_symbols(symbols):
     if not os.path.exists(SQLite_dir):
         os.makedirs(SQLite_dir)
     else:
         for f in os.listdir(SQLite_dir):
             os.remove(os.path.join(SQLite_dir, f))
-    
     for symbol in symbols:
         try:
             _thread.start_new_thread( storing_price_symbol, (symbol , ))
