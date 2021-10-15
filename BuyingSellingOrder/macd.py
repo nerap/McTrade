@@ -92,7 +92,7 @@ def strategy(symbol, qty, client, open_position=False):
         if df.Close[-1] <= buy_price * 0.995 or df.Close[-1] >= 1.005 * buy_price:
             sell_price = float(client.get_symbol_ticker(symbol=symbol)['price']) * qty
             print("sell at : " + str(sell_price))
-            file_object.write(str((sell_price - buy_price)/buy_price))
+            file_object.write(str(df.Time[-1]) + " Profit :" + str((sell_price - buy_price)) * "\n")
             file_object.close()
             break
 
