@@ -51,20 +51,19 @@ def strategy(symbol, qty, client, open_position=False):
     print(f'current Close is ' + str(df.Close.iloc[-1]))
     if (df.Buy.iloc[-1]):
         order = client.create_order(symbol=symbol, side="BUY", type="MARKET", quantity=qty)
-        buyprice = float(order['fills'][0]['price'])
+        buy_price = float(order['fills'][0]['price'])
         print(order)
         open_position = True
     while open_position:
         time.sleep(0.5)
         df = fs.get_data_frame(client, symbol, "1m", '2')
         print(f'current Close is ' + str(df.Close.iloc[-1]))
-        print(f'current Close Second is ' + str(df.Close[-1]))
-        print(f'current Target is ' + str(buy_price * 1.0025))
-        print(f'current Stop is ' + str(buy_price * 0.9975))
-        if df.Close[-1] <= (buy_price * 0.9975) or df.Close[-1] >= (buy_price * 1.0025):
+        print(f'current Target is ' + str(buy_price * 1.005))
+        print(f'current Stop is ' + str(buy_price * 0.995))
+        if df.Close[-1] <= (buy_price * 0.995) or df.Close[-1] >= (buy_price * 1.005):
             order = client.create_order(symbol=symbol, side="SELL", type="MARKET", quantity=qty)
             sell_price = float(order['fills'][0]['price'])
-            file_object.write(str(str((sell_price - buy_price) * qty) +  "\n"))
+            file_object.write(str((sell_price - buy_price) * qty) +  "\n"))
             file_object.close()
             break
 
