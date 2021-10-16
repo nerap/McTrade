@@ -63,7 +63,7 @@ def strategy(symbol, qty, client, open_position=False):
         if df.Close[-1] <= (buy_price * 0.995) or df.Close[-1] >= (buy_price * 1.005):
             order = client.create_order(symbol=symbol, side="SELL", type="MARKET", quantity=qty)
             sell_price = float(order['fills'][0]['price'])
-            file_object.write(str((sell_price - buy_price) * qty) +  "\n"))
+            file_object.write(str((sell_price - buy_price) * qty) +  "\n")
             file_object.close()
             break
 
