@@ -73,9 +73,9 @@ def strategy(symbol, qty, client, open_position=False):
         df = get_data_frame(client, symbol, "1m", '2')
         print(f'current Close is ' + str(df.Close.iloc[-1]))
         print(f'current Close Second is ' + str(df.Close[-1]))
-        print(f'current Target is ' + str(buy_price * 1.005))
-        print(f'current Stop is ' + str(buy_price * 0.995))
-        if df.Close[-1] <= (buy_price * 0.995) or df.Close[-1] >= (buy_price * 1.005):
+        print(f'current Target is ' + str(buy_price * 1.002))
+        print(f'current Stop is ' + str(buy_price * 0.998))
+        if df.Close[-1] <= (buy_price * 0.998) or df.Close[-1] >= (buy_price * 1.002):
             sell_price = df.Close[-1]
             print("sell at : " + str(sell_price))
             file_object.write(str(str((sell_price - buy_price) * qty) +  "\n"))
