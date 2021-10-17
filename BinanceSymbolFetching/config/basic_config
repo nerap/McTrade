@@ -2,8 +2,15 @@
     "symbols": [
         {
             "symbol": "ETHUSDT",
-            "quantity": 50,
-            "risk": 5
+            "quantity": 20
+        },
+        {
+            "symbol": "BTCUSDT",
+            "quantity": 20
+        },
+        {
+            "symbol": "DOGEUSDT",
+            "risk": 3
         }
     ]
 }

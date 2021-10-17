@@ -3,13 +3,51 @@
 import os
 import time
 import json
+import math
 import sqlalchemy
 import sys, getopt
 import requests as rq
 from dotenv import load_dotenv
 
+MAX_QUANTITY = 100
+MIN_QUANTITY = 5
+MAX_RISK = 25
+MIN_RISK = 3
+DEFALUT_RISK = 5
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
+
+# Making sure that the symbol in the configuration file is valid for Binance
+
+def parse_quantity_risk(symbols):
+    quantity = 0
+    for i in range(len(symbols)):
+        if 'risk' in symbols[i]:
+            if symbols[i]['risk'] < MIN_RISK or symbols[i]['risk'] > MAX_RISK:
+                print('Invalid risk ' + str(symbols[i]['risk']) + ' for symbol ' + symbols[i]['symbol'])
+                print('Risk should be between >= ' + str(MIN_RISK) + ' and <= ' + str(MAX_RISK) + '!')
+                print('Default value is ' + DEFALUT_RISK)
+                sys.exit(1)
+            else:
+                symbols[i]['risk'] = math.floor(symbols[i]['risk'])
+        else:
+            symbols[i]['risk'] = DEFALUT_RISK
+        if 'quantity' in symbols[i]:
+            if symbols[i]['quantity'] <= MIN_QUANTITY or symbols[i]['quantity'] > MAX_QUANTITY:
+                print('Invalid quantity ' + str(symbols[i]['quantity']) + ' for symbol ' + symbols[i]['symbol'])
+                print('Quantity should be between >= ' + str(MIN_QUANTITY) + ' and <= ' + str(MAX_QUANTITY) + '!')
+                print('Quantity default value is ( Number_of_symbols / ' + str(MAX_QUANTITY) + ' )')
+                sys.exit(1)
+            else:
+                quantity += math.floor(symbols[i]['quantity'])
+        else:
+            symbols[i]['quantity'] = math.floor(MAX_QUANTITY / len(symbols))
+            quantity += symbols[i]['quantity']
+    if quantity > MAX_QUANTITY:
+        print('Invalid quantity the total quantity of your symbols is above 100% which is impossible check your configuration file')
+        print('Quantity default value is ( Number_of_symbols / ' + str(MAX_QUANTITY) + ' )')
+        sys.exit(1)
+    return symbols
 
 # Making sure that the symbol in the configuration file is valid for Binance
 
@@ -50,6 +88,7 @@ def parse_config_file(config_file):
     else:
         print("Error: configuration file doesn't have the right key")
         sys.exit(1)
+    config_object['symbols'] = parse_quantity_risk(config_object['symbols'])
     for symbol in config_object['symbols']:
         parse_symbol(symbol['symbol'])
         symbols.append(symbol)

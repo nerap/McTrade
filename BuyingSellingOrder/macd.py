@@ -49,12 +49,12 @@ class Signals:
                                         (self.data_frame.MACD < 0), 1, 0)
 
 
-def applytechnicals(df):
-    df['K'] = ta.momentum.stoch(df.High, df.Low, df.Close, window=14, smooth_window=3)
-    df['D'] = df['K'].rolling(3).mean()
-    df['RSI'] = ta.momentum.rsi(df.Close, window=14)
-    df['MACD'] = ta.trend.macd_diff(df.Close)
-    df.dropna(inplace=True)
+def applytechnicals(data_frame):
+    data_frame['K'] = ta.momentum.stoch(data_frame.High, data_frame.Low, data_frame.Close, window=14, smooth_window=3)
+    data_frame['D'] = data_frame['K'].rolling(3).mean()
+    data_frame['RSI'] = ta.momentum.rsi(data_frame.Close, window=14)
+    data_frame['MACD'] = ta.trend.macd_diff(data_frame.Close)
+    data_frame.dropna(inplace=True)
 
 
 def get_floor_quantity(symbol, quantity, client):
