@@ -7,10 +7,6 @@
         {
             "symbol": "BTCUSDT",
             "quantity": 20
-        },
-        {
-            "symbol": "DOGEUSDT",
-            "risk": 3
         }
     ]
 }

@@ -16,6 +16,9 @@ from time import sleep
 from binance.exceptions import BinanceAPIException
 from BinanceSymbolFetching import fetching_symbols as fetch_symb
 
+usdt_wallet = {}
+mutex = threading.Lock()
+
 class Signals:
         def __init__(self, data_frame, steps):
             self.data_frame = data_frame
@@ -64,7 +67,7 @@ def get_floor_quantity(symbol, quantity, client):
         return (math.floor(quantity * (10 ** 2))) / 10 ** 2 
     for i in res['filters']:
         if i['filterType'] == 'LOT_SIZE':
-            temp = float(i['minQty']) * 100000000
+            temp = math.floor(float(i['minQty']) * 100000000)
             while temp != 1:
                 temp /= 10
                 size -= 1
@@ -72,10 +75,21 @@ def get_floor_quantity(symbol, quantity, client):
             break
     return quantity
 
+def ret_usdt_wallet(usdt_wallet):
+    res = 0.0
+    for name, values in usdt_wallet.items():
+        res += float(values)
+    return res
+
+        
+
 def buying_order(symbol, client, data_frame, side=Client.SIDE_BUY, order_type=Client.ORDER_TYPE_MARKET):
+    mutex.acquire()
     balance = client.get_asset_balance(asset='USDT')
-    quantity = float(balance['free']) * (symbol['quantity'] / 100)
-    quantity = get_floor_quantity('USDT', quantity, client) 
+    quantity = (float(balance['free']) + ret_usdt_wallet(usdt_wallet)) * (symbol['quantity'] / 100)
+    quantity = get_floor_quantity('USDT', quantity, client)
+    usdt_wallet[symbol['symbol']] = str(quantity)
+    tmp = quantity
     quantity = quantity / data_frame.Close.iloc[:-1][-1] * 100 / 100
     quantity = get_floor_quantity(symbol['symbol'], quantity, client)
     print(quantity)
@@ -83,7 +97,9 @@ def buying_order(symbol, client, data_frame, side=Client.SIDE_BUY, order_type=Cl
         order = client.create_order(symbol=symbol['symbol'], side=side, type=order_type, quantity=quantity)
     except BinanceAPIException as e:
         print(e)
+        mutex.release()
         return False
+    mutex.release()
     buy_price = float(order['fills'][0]['price'])
     print(buy_price)
     print(order)
@@ -99,6 +115,9 @@ def selling_order(symbol, client, data_frame, side=Client.SIDE_SELL, order_type=
     except BinanceAPIException as e:
         print(e)
         return False
+    mutex.acquire()
+    usdt_wallet[symbol['symbol']] = '0'
+    mutex.release()
     sell_price = float(order['fills'][0]['price'])
     print(sell_price)
     print(order)
@@ -124,6 +143,11 @@ def strategy(symbol, client, open_position=False):
             
 
 def loop_thread_strat(symbol, client):
+    global usdt_wallet
+
+    mutex.acquire()
+    usdt_wallet[symbol['symbol']] = '0'
+    mutex.release()
     while True:
         if strategy(symbol, client) == False:
             return
@@ -132,7 +156,6 @@ def loop_thread_strat(symbol, client):
 def starting_loop_order(symbols):
     api_key = os.environ.get('api_key')
     secret_api_key = os.environ.get('secret_api_key')
-
     try:
         client = Client(api_key, secret_api_key)
     except BinanceAPIException as e:
@@ -144,7 +167,7 @@ def starting_loop_order(symbols):
     
     threads = []
     for symbol in symbols:
-        threads.append(threading.Thread(target=loop_thread_strat, args=(symbol, client, )))
+        threads.append(threading.Thread(target=loop_thread_strat, args=(symbol, client, ), daemon=True))
 
     # Starting the threads
 
@@ -152,7 +175,10 @@ def starting_loop_order(symbols):
         tmp_thread.start()
 
     # Joining the threads
-
-    for tmp_thread in threads:
-        tmp_thread.join()
+    try:
+        for tmp_thread in threads:
+            tmp_thread.join()
+    except KeyboardInterrupt:
+        print("Successfully exited from all threads, (need to implements conclusion) ")
+        sys.exit(1)
     
