@@ -5,8 +5,12 @@ import sys
 from dotenv import load_dotenv
 from BinanceSymbolFetching import configuration_file_parsing as cfp
 from BinanceSymbolFetching import fetching_symbols as fs
+from BuyingSellingOrder import macd as mac
 
 if __name__ == "__main__":
     load_dotenv()
+    if os.environ.get('api_key') == None or os.environ.get('secret_api_key') == None:
+        print ("Error: no api_key found, pls create .env file at the root of the main direction, with api_key and secret_api_key variable")
+        sys.exit(1)
     symbols = cfp.parse_entry(sys.argv[1:])
-    fs.fetching_symbols(symbols)
+    mac.starting_loop_order(symbols)

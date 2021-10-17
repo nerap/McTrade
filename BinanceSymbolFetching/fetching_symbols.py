@@ -9,19 +9,21 @@ import sys
 import pandas as pd
 import requests as rq
 
-SQLite_dir = 'SQLiteDB/'
-url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
-
 # Reformate the json response "res" to a pandas DataFrame 
 
-def create_frame(res):
-    df = pd.DataFrame([{"symbol": res["symbol"],
-                        "datetime": int(time.time()),
-                        "price": float(res["price"]) }])
-    df.columns = ['Symbol', 'Time', 'Price']
-    df.Price = df.Price.astype(float)
-    df.Time = pd.to_datetime(int(time.time() * 1000), unit="ms")
-    return (df)
+def get_data_frame(client, symbol, interval, lookback):
+    try:
+        data_frame = pd.DataFrame(client.get_historical_klines(symbol, interval, lookback))
+    except BinanceAPIException as e:
+        print(e)
+        sleep(60)
+        data_frame = pd.DataFrame(client.get_historical_klines(symbol, interval, lookback))
+    data_frame = data_frame.iloc[:, :6]
+    data_frame.columns = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
+    data_frame = data_frame.set_index('Time')
+    data_frame.index = pd.to_datetime(data_frame.index, unit="ms")
+    data_frame = data_frame.astype(float)
+    return data_frame
 
 # Transforming DataFrame into SQLite data
 

@@ -30,6 +30,7 @@ regex==2021.10.8
 requests==2.26.0
 six==1.16.0
 SQLAlchemy==1.4.25
+ta==0.7.0
 typing-extensions==3.10.0.2
 tzdata==2021.2.post0
 tzlocal==3.0
@@ -37,4 +38,5 @@ ujson==4.2.0
 urllib3==1.26.7
 websockets==9.1
 yarl==1.7.0
+yfinance==0.1.63
 zipp==3.6.0
