@@ -12,6 +12,8 @@ test:
 
 #Installing dependencies
 init:
+	echo "api_key=SOME_API_KEY" > .env
+	echo "secret_api_key=SOME_SECRET_API_KEY" >> .env
 	python3 -m pip install --upgrade pip
 	pip3 install -r requirements.txt
 
