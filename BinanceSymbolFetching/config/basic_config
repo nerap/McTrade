@@ -1,13 +1,9 @@
 {
     "symbols": [
         {
-            "symbol": "BTCUSDT"
-        },
-        {
-            "symbol": "LINKBTC"
-        },
-        {
-            "symbol": "BTCBUSD"
+            "symbol": "ETHUSDT",
+            "quantity": 50,
+            "risk": 5
         }
     ]
 }

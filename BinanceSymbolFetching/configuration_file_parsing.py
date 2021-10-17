@@ -51,11 +51,12 @@ def parse_config_file(config_file):
         print("Error: configuration file doesn't have the right key")
         sys.exit(1)
     for symbol in config_object['symbols']:
-        symbols.append(parse_symbol(symbol['symbol']))
+        parse_symbol(symbol['symbol'])
+        symbols.append(symbol)
     for i in range(len(symbols)):
         for j in range(len(symbols)):
-            if symbols[i] == symbols[j] and i != j:
-                print("Error: duplicated symbol " + symbols[i] + " in configuration file")
+            if symbols[i]['symbol'] == symbols[j]['symbol'] and i != j:
+                print("Error: duplicated symbol " + symbols[i]['symbol'] + " in configuration file")
                 sys.exit(1)
     return symbols
 
