@@ -3,6 +3,8 @@ import pandas as pd
 import time
 import numpy as np
 
+# Need to explain this
+
 class Signals:
         def __init__(self, data_frame, steps):
             self.data_frame = data_frame
