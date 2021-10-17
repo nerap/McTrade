@@ -1,4 +1,7 @@
+#!/usr/bin/python3
+
 import os
+import sys
 from binance.client import Client
 import pandas as pd
 import time
@@ -7,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import requests as rq
 import math
-import _thread
+import threading
 import ta
 from time import sleep
 from binance.exceptions import BinanceAPIException
@@ -116,7 +119,7 @@ def strategy(symbol, client, open_position=False):
         time.sleep(2)
         data_frame = fetch_symb.get_data_frame(client, symbol['symbol'], "30m", '14 day ago UTC')
         print(data_frame.iloc[-1])
-        if (data_frame.Buy.iloc[-1]):
+        if (data_frame.Sell.iloc[-1]):
             return selling_order(symbol, client, data_frame)
             
 
@@ -129,9 +132,27 @@ def loop_thread_strat(symbol, client):
 def starting_loop_order(symbols):
     api_key = os.environ.get('api_key')
     secret_api_key = os.environ.get('secret_api_key')
-    client = Client(api_key, secret_api_key)
+
+    try:
+        client = Client(api_key, secret_api_key)
+    except BinanceAPIException as e:
+        print(e)
+        print("Error: cannot create a connection to Binance with those api_key")
+        sys.exit(1)
+
+    # Creating the threads
+    
+    threads = []
     for symbol in symbols:
-        _thread.start_new_thread( loop_thread_strat, (symbol, client, ))
-    while True:
-        pass
+        threads.append(threading.Thread(target=loop_thread_strat, args=(symbol, client, )))
+
+    # Starting the threads
+
+    for tmp_thread in threads:
+        tmp_thread.start()
+
+    # Joining the threads
+
+    for tmp_thread in threads:
+        tmp_thread.join()
     
