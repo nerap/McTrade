@@ -2,7 +2,8 @@
     "symbols": [
         {
             "symbol": "ETHUSDT",
-            "quantity": 50
+            "risk": 5,
+            "quantity": 100
         }
     ]
 }
