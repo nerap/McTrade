@@ -48,6 +48,7 @@ def buying_order(symbol, client, data_frame, side=Client.SIDE_BUY, order_type=Cl
     print(buy_price)
     print(order)
     print("Buying")
+    fetch_symb.insert_sql_data(order)
     return True
 
 # Sell when Rsi < 50, K and D < 80 && > 20, MACD < 0, Selling Trigger
@@ -68,6 +69,7 @@ def selling_order(symbol, client, data_frame, side=Client.SIDE_SELL, order_type=
     print(sell_price)
     print(order)
     print("Selling")
+    fetch_symb.insert_sql_data(order)
     return True
 
 # Only selling when open position, and buying when no open position, 30m interval and 14 day lookback

@@ -9,6 +9,8 @@ import sys
 import pandas as pd
 import requests as rq
 
+SQLite_dir = 'SQLiteDB/'
+
 # Reformate the json response "res" to a pandas DataFrame 
 
 def get_data_frame(client, symbol, interval, lookback):
@@ -25,31 +27,42 @@ def get_data_frame(client, symbol, interval, lookback):
     data_frame = data_frame.astype(float)
     return data_frame
 
+def create_frame(order):
+    data_frame = pd.DataFrame([{"symbol": order['symbol'],
+                                "orderId": order['orderId'],
+                                "time": order['transactTime'],
+                                'price': float(order['fills'][0]['price']),
+                                'qty': float(order['fills'][0]['qty']),
+                                'cummulativeQuoteQty': float(order['cummulativeQuoteQty']),
+                                'type': order['type'],
+                                'side': order['side'],
+                                'commission': float(order['fills'][0]['commission']) }])
+    data_frame.columns = ['Symbol', 'OrderId', 'Time', 'Price', 'Qty', 'CummulativeQuoteQty', 'Type', 'Side', 'Commission']
+    data_frame.Price = data_frame.Price.astype(float)
+    data_frame.Qty = data_frame.Qty.astype(float)
+    data_frame.CummulativeQuoteQty = data_frame.CummulativeQuoteQty.astype(float)
+    data_frame.Commission = data_frame.Commission.astype(float)
+    data_frame.Time = pd.to_datetime(data_frame.Time, unit="ms")
+    return (data_frame)
+
 # Transforming DataFrame into SQLite data
 
-def storing_price_symbol(symbol):
-    engine = sqlalchemy.create_engine('sqlite:///' + SQLite_dir + symbol + 'stream.db')
-    while True:
-        res = rq.get(url_binance_ticker_price + symbol).json()
-        data_frame = create_frame(res)
-        data_frame.to_sql(symbol, engine, if_exists='append', index=False)
+def storing_order(order):
+    try:
+        engine = sqlalchemy.create_engine('sqlite:///' + SQLite_dir + order['symbol'] + 'stream.db')
+        data_frame = create_frame(order)
+        data_frame.to_sql(order['symbol'], engine, if_exists='append', index=False)
         print(data_frame)
+    except ValueError as e:
+        raise e
 
 # Starting a Thread for each symbol in the configuration file
 
-def fetching_symbols(symbols):
+def insert_sql_data(order):
     if not os.path.exists(SQLite_dir):
         os.makedirs(SQLite_dir)
-    else:
-        for f in os.listdir(SQLite_dir):
-            os.remove(os.path.join(SQLite_dir, f))
-    for symbol in symbols:
-        try:
-            _thread.start_new_thread( storing_price_symbol, (symbol , ))
-        except ValueError as e:
-            print('Error: Thread unable to start')
-            sys.exit(1)
-    while True:
-        time.sleep(0.100)
-        pass
-    print('Every thread is working')
+    try:
+        storing_order(order)
+    except ValueError as e:
+        print('Error: SQLite couldn\'t store data')
+        sys.exit(1)

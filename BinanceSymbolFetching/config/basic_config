@@ -2,11 +2,7 @@
     "symbols": [
         {
             "symbol": "ETHUSDT",
-            "quantity": 20
-        },
-        {
-            "symbol": "BTCUSDT",
-            "quantity": 20
+            "quantity": 50
         }
     ]
 }
