@@ -26,6 +26,11 @@ class TestBasicConfigFile(unittest.TestCase):
         main_stdout = subprocess.run(['python3', main_name, '--file=', 'ETGGGGdfs'], stdout=subprocess.PIPE).stdout
         comp_stdout = str.encode('Error: configuration file missing\n')
         self.assertEqual(main_stdout, comp_stdout)
+
+    def test_basic_config_file_04(self):
+        main_stdout = subprocess.run(['python3', main_name, '-f', directory + 'test/test_config_file/config_file_wrong_currency'], stdout=subprocess.PIPE).stdout
+        comp_stdout = str.encode('Error: LINKBUSD is not valid for BinanceBot check your configuration file\nBinanceBot can only hold USDT currency as pair with another crypto like -> BTCUSDT, XRPUSDT, ETHUSDT, etc..\nNote that you cannot trade USDT currency such as -> USDTBIDR, USDTRUB, USDTUAH, etc..\n')
+        self.assertEqual(main_stdout, comp_stdout)
     
     def test_basic_config_file_05(self):
         main_stdout = subprocess.run(['python3', main_name, '--file=' + directory + 'test/test_config_file/config_file_duplicate'], stdout=subprocess.PIPE).stdout

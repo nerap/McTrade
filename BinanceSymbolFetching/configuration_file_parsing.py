@@ -52,6 +52,11 @@ def parse_quantity_risk(symbols):
 # Making sure that the symbol in the configuration file is valid for Binance
 
 def parse_symbol(symbol):
+    if symbol[-4:] != 'USDT':
+        print('Error: ' + symbol + ' is not valid for BinanceBot check your configuration file')
+        print('BinanceBot can only hold USDT currency as pair with another crypto like -> BTCUSDT, XRPUSDT, ETHUSDT, etc..')
+        print('Note that you cannot trade USDT currency such as -> USDTBIDR, USDTRUB, USDTUAH, etc..')
+        sys.exit(1)
     res = rq.get(url_binance_ticker_price + symbol).json()
     if 'msg' in res:
         print(symbol + ' is not valid for BinanceBot check your configuration file')
