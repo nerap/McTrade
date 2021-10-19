@@ -4,11 +4,11 @@ all: $(NAME)
 
 #Running the basic command line arguments
 $(NAME):
-	./BinanceBot --file=BinanceSymbolFetching/config/basic_config
+	./BinanceBot --file=config_files/basic_config
 
 #Running test
 test:
-	python3 -m unittest BinanceSymbolFetching/test/*test.py
+	python3 -m unittest srcs/entry_parsing/test/*test.py
 
 #Create .env file
 env:

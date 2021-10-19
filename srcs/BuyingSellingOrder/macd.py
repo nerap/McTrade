@@ -12,7 +12,9 @@ from time import sleep
 from .Signal import Signals
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
-from BinanceSymbolFetching import fetching_symbols as fetch_symb
+from ..fetching_symbols import fetching_symbols as fetch_symb
+from ..sqlite_storing_order import insert_order as insert_order
+from ..sqlite_storing_order import retrieve_order as retrieve_order
 from . import utils as ut
 
 usdt_wallet = {}
@@ -48,7 +50,7 @@ def buying_order(symbol, client, data_frame, side=Client.SIDE_BUY, order_type=Cl
     print(buy_price)
     print(order)
     print("Buying")
-    fetch_symb.insert_sql_data(order)
+    insert_sql_order.insert_sql_data(order)
     return True
 
 # Sell when Rsi < 50, K and D < 80 && > 20, MACD < 0, Selling Trigger
@@ -69,7 +71,7 @@ def selling_order(symbol, client, data_frame, side=Client.SIDE_SELL, order_type=
     print(sell_price)
     print(order)
     print("Selling")
-    fetch_symb.insert_sql_data(order)
+    insert_sql_order.insert_sql_data(order)
     return True
 
 # Only selling when open position, and buying when no open position, 30m interval and 14 day lookback
@@ -97,7 +99,7 @@ def loop_thread_strat(symbol, client):
     global usdt_wallet
 
     mutex.acquire()
-    last_open_position_price = fetch_symb.get_last_open_position_price(symbol['symbol'])
+    last_open_position_price = retrieve_order.get_last_open_position_price(symbol['symbol'])
     if last_open_position_price > 0:
         open_position = True
     else:

@@ -2,7 +2,7 @@ import io
 import unittest
 import subprocess
 
-directory = "BinanceSymbolFetching/"
+directory = "srcs/entry_parsing/"
 main_name = directory + "configuration_file_parsing.py"
 
 class TestBasicConfigFile(unittest.TestCase):
