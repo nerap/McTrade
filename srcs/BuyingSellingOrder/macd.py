@@ -2,20 +2,16 @@
 
 import os
 import sys
-import math
 import threading
-import ta
-import time
 import pandas as pd
-import numpy as np
 from time import sleep
 from .Signal import Signals
 from binance.client import Client
 from binance.exceptions import BinanceAPIException
+from . import utils as ut
 from ..fetching_symbols import fetching_symbols as fetch_symb
 from ..sqlite_storing_order import insert_order as insert_order
 from ..sqlite_storing_order import retrieve_order as retrieve_order
-from . import utils as ut
 
 usdt_wallet = {}
 mutex = threading.Lock()
@@ -87,7 +83,7 @@ def strategy(symbol, client, open_position=False):
             return False
         open_position = True
     while open_position:
-        time.sleep(2)
+        sleep(2)
         data_frame = fetch_symb.get_data_frame(client, symbol['symbol'], "30m", '14 day ago UTC')
         print(data_frame.iloc[-1])
         if (data_frame.Sell.iloc[-1]):
