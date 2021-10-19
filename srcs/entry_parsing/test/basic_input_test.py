@@ -2,7 +2,7 @@ import io
 import unittest
 import subprocess
 
-main_name = "BinanceBot"
+main_name = "McTrade.py"
 
 class TestBasicInput(unittest.TestCase):
     def test_basic_input_00(self):

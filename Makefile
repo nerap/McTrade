@@ -4,7 +4,7 @@ all: $(NAME)
 
 #Running the basic command line arguments
 $(NAME):
-	./BinanceBot --file=config_files/basic_config
+	./McTrade --file=config_files/basic_config
 
 #Running test
 test:
