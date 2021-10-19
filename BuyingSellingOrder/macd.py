@@ -80,7 +80,7 @@ def strategy(symbol, client, open_position=False):
     inst = Signals(data_frame, symbol['risk'])
     inst.decide()
     print(data_frame.iloc[-1])
-    if (data_frame.Buy.iloc[-1]):
+    if open_position == False and data_frame.Buy.iloc[-1]:
         if buying_order(symbol, client, data_frame) == False:
             return False
         open_position = True
@@ -97,10 +97,15 @@ def loop_thread_strat(symbol, client):
     global usdt_wallet
 
     mutex.acquire()
-    usdt_wallet[symbol['symbol']] = '0'
+    last_open_position_price = fetch_symb.get_last_open_position_price(symbol['symbol'])
+    if last_open_position_price > 0:
+        open_position = True
+    else:
+        open_position = False
+    usdt_wallet[symbol['symbol']] = str(last_open_position_price)
     mutex.release()
     while True:
-        if strategy(symbol, client) == False:
+        if strategy(symbol, client, open_position) == False:
             return
         sleep(2)
 
@@ -129,8 +134,11 @@ def starting_loop_order(symbols):
 
     # Joining the threads
     try:
-        for tmp_thread in threads:
-            tmp_thread.join()
+        while True:
+            for tmp_thread in threads:
+                if tmp_thread.is_alive() == False:
+                    print("Thread Died")
+                    sys.exit(1)
     except KeyboardInterrupt:
         print("Successfully exited from all threads, (need to implements conclusion) ")
         sys.exit(1)
