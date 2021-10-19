@@ -3,7 +3,9 @@
         {
             "symbol": "ETHUSDT",
             "quantity": 20,
-            "risk": 5
+            "risk": 5,
+            "interval": "30m",
+            "lookback": "14 day ago UTC"
         }
     ]
 }
