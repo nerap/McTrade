@@ -11,6 +11,25 @@ import requests as rq
 
 SQLite_dir = 'SQLiteDB/'
 
+# Get last open position price reading the SQLite file with the associated symbol
+
+def get_last_open_position_price(symbol):
+    try:
+        if not os.path.exists(SQLite_dir):
+            os.makedirs(SQLite_dir)
+        if not os.path.exists(SQLite_dir + symbol + 'stream.db'):
+            return 0
+        engine = sqlalchemy.create_engine('sqlite:///' + SQLite_dir + symbol + 'stream.db')
+        data_frame = pd.read_sql(symbol, engine)
+        if data_frame.empty or data_frame[-1:]['Side'].values[0] == 'SELL':
+            return 0
+        else:
+            return data_frame[-1:]['CummulativeQuoteQty'].values[0]
+    except ValueError as e:
+        print(e)
+        print('Error : SQLachlchemy couldn\'t create engine when getting last price on open position')
+        raise e
+
 # Reformate the json response "res" to a pandas DataFrame 
 
 def get_data_frame(client, symbol, interval, lookback):
@@ -54,6 +73,8 @@ def storing_order(order):
         data_frame.to_sql(order['symbol'], engine, if_exists='append', index=False)
         print(data_frame)
     except ValueError as e:
+        print(e)
+        print('Error : SQLachlchemy couldn\'t create engine when storing order')
         raise e
 
 # Starting a Thread for each symbol in the configuration file
