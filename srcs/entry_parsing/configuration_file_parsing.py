@@ -43,6 +43,10 @@ def parse_quantity_risk(symbols):
         else:
             symbols[i]['quantity'] = math.floor(MAX_QUANTITY / len(symbols))
             quantity += symbols[i]['quantity']
+        if not 'interval' in symbols[i]:
+            symbols[i]['interval'] = "30m"
+        if not 'lookback' in symbols[i]:
+            symbols[i]['lookback'] = "14 day ago UTC"
     if quantity > MAX_QUANTITY:
         print('Invalid quantity the total quantity of your symbols is above 100% which is impossible check your configuration file')
         print('Quantity default value is ( Number_of_symbols / ' + str(MAX_QUANTITY) + ' )')

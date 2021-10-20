@@ -3,20 +3,16 @@
         {
             "symbol": "ETHUSDT",
             "risk": 5,
-            "interval": "30m",
-            "lookback": "14 day ago UTC"
+            "quantity": 50
         },
         {
             "symbol": "BTCUSDT",
-            "risk": 7,
-            "interval": "30m",
-            "lookback": "14 day ago UTC"
+            "risk": 7
         },
         {
             "symbol": "XRPUSDT",
             "risk": 5,
-            "interval": "30m",
-            "lookback": "14 day ago UTC"
+            "quantity": 20
         }
     ]
 }
