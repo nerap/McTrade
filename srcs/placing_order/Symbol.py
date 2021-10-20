@@ -359,7 +359,11 @@ class Symbol:
 
         # Printing last row of the data frame
 
-        print(self.data_frame.iloc[-1])
+        print("\t\t" + self.symbol)
+        print("Close -> " + str(self.data_frame.Close.iloc[-1]))
+        print("K -> " + str(round(self.data_frame['K'].iloc[-1], 2)) + " D -> " + str(round(self.data_frame['D'].iloc[-1], 2)))
+        print("RSI -> " + str(round(self.data_frame.RSI.iloc[-1], 2)) + " MACD -> " + str(round(self.data_frame.MACD.iloc[-1], 3)))
+        print(str(self.data_frame.Buy_trigger.iloc[-1]) + " | " + str(self.data_frame.Sell_trigger.iloc[-1]))
 
         # Making sure if we are not in open_position and we want to place an order with .Buy or .Sell
 
