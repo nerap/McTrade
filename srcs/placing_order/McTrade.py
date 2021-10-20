@@ -1,5 +1,6 @@
 import os
 import sys
+from time import sleep
 import threading
 from .Symbol import Symbol
 from binance.client import Client
@@ -62,7 +63,26 @@ class McTrade:
 
         symbol = Symbol(symbol, client, mutex)
 
-        symbol.main_loop() 
+        symbol.main_loop()
+
+    # Revieve a single thread based on the index
+
+    def revieve_thread(self, index):
+    
+        try:
+
+            # Rebuilding the thread
+
+            self.threads.append(threading.Thread(target=self.main_loop_thread, args=(self.config[index], self.client, ), daemon=True))
+        
+            # Restarsting the thread
+
+            self.threads[index].start()
+
+        except ValueError as e:
+            print(e)
+            print("Error: Unable to start the thread in starting_symbol_order function")
+            sys.exit(1)
 
     # Confiurating each thread
 
@@ -101,8 +121,15 @@ class McTrade:
 
                     if self.threads[index].is_alive() == False:
                     
-                        print("Thread Died")
-                        sys.exit(1)
+                        print("Restarting the thread in 5 seconds")
+
+                        sleep(5)
+
+                        # Revieve the thead that just die
+
+                        self.revieve_thread(index)
+                    
+                
         except KeyboardInterrupt:
 
             # Catching ctrl + c to exit all threads at the same time
