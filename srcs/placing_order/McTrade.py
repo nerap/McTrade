@@ -54,35 +54,19 @@ class McTrade:
 
     def main_loop_thread(self, symbol, client):
 
-        # Making sure that usdt_wallet is a global variable
+        # Making sure that mutex is available in all threads
 
-        global usdt_wallet
-
-        mutex.acquire()
+        global mutex
 
         # Instantiate Symbol object to init attributes
 
-        symbol = Symbol(symbol, client)
-
-        # Retrieving open_position_price in Symbol object to make sure that
-        # every symbol know how much quote is available
-
-        usdt_wallet[symbol.symbol] = str(symbol.open_position_price)
-
-
-        mutex.release()
-
-        # Calling the main_loop to keep them alive
+        symbol = Symbol(symbol, client, mutex)
 
         symbol.main_loop() 
 
     # Confiurating each thread
 
     def starting_symbol_order(self):
-
-        # Making the mutex available to each thread
-
-        global mutex
 
         try:
 

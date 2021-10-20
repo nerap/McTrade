@@ -22,7 +22,7 @@ def get_last_open_position_price(symbol):
         if not os.path.exists(SQLite_dir):
             os.makedirs(SQLite_dir)
         if not os.path.exists(SQLite_dir + symbol + 'stream.db'):
-            return 0
+            return [0, 0]
 
         # Creating the engine linking
 
@@ -32,9 +32,9 @@ def get_last_open_position_price(symbol):
         # Check if the last row is a SELL order, if it is, then we have no open position
 
         if data_frame.empty or data_frame[-1:]['Side'].values[0] == 'SELL':
-            return 0
+            return [0, 0]
         else:
-            return data_frame[-1:]['CummulativeQuoteQty'].values[0]
+            return [data_frame[-1:]['CummulativeQuoteQty'].values[0], data_frame[-1:]['Qty'].values[0]]
     except ValueError as e:
         print(e)
         print('Error : SQLachlchemy couldn\'t create engine when getting last price on open position')

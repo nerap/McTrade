@@ -13,6 +13,8 @@ from ..fetching_symbols import fetching_symbols as fetch_symb
 from ..sqlite_storing_order import insert_order as insert_order
 from ..sqlite_storing_order import retrieve_order as retrieve_order
 
+usdt_wallet = {}
+
 # An Symbol is created for each symbol configurated in the config file
 
 class Symbol:
@@ -23,8 +25,8 @@ class Symbol:
     # quote     -> "USDT" and only "USDT" for now
     # risk      -> 3 >= risk <= 25 (the higher this value is the more risky the bot will be)
     # quantity  -> 5 >= quantity <= 100 (Max percentage of the wallet (quote currency))
-    # coin_floor_quantity -> the precision of the coin, must have to perform a transaction
-    # quote_floor_quantity -> the precision of the quote, must have to perform a transaction
+    # coin_floor_precision -> the precision of the coin, must have to perform a transaction
+    # quote_floor_precision -> the precision of the quote, must have to perform a transaction
     # interval  -> String representing the interval between each data we will fork, the quicker the interval is, the more reactive the bot will be, check https://python-binance.readthedocs.io/en/latest/constants.html
     # lookback  -> String representing how old your data will be, like interval, check https://python-binance.readthedocs.io/en/latest/constants.html, for more information
     # data_frame-> pandas.DataFrame current data used by the bot to know if we want to buy/sell or not with certain financial indicator
@@ -33,7 +35,15 @@ class Symbol:
     # Each of those attributes are mandatary for the bot to perform well
 
 
-    def __init__(self, config, client):
+    def __init__(self, config, client, mutex):
+
+        # Making sure that usdt_wallet is a global variable
+
+        global usdt_wallet
+
+        self.mutex = mutex
+
+        self.client = client
 
         self.symbol = config['symbol']
 
@@ -43,19 +53,28 @@ class Symbol:
         self.risk = config['risk']
         self.quantity = config['quantity']
 
-        self.coin_floor_quantity = self.get_quantity_precision(self.symbol)
+        self.get_last_open_position()
+
+        self.mutex.acquire()
+
+        # Instantiate Symbol object to init attributes
+
+        # Retrieving open_position_price in Symbol object to make sure that
+        # every symbol know how much quote is available
+
+        usdt_wallet[self.symbol] = str(self.open_position_price)
+
+        self.mutex.release()
+
+        self.coin_floor_precision = self.get_quantity_precision(self.symbol)
 
         # For know the quote value is USDT so we know the exact precision
 
-        self.quote_floor_quantity = 2
+        self.quote_floor_precision = 2
 
         self.interval = config['interval']
         self.lookback = config['lookback']
        
-        self.get_last_open_position()
-
-        self.client = client
-
         # Storing the first fetch as DataFrame, not affected by financial indicators
 
         self.data_frame = fetch_symb.get_data_frame(self.client, self.symbol, self.interval, self.lookback)
@@ -63,7 +82,7 @@ class Symbol:
     # Sum up the USDT wallet
     # @Return the total wallet values as float 
 
-    def ret_usdt_wallet():
+    def ret_usdt_wallet(self):
 
         res = 0.0
 
@@ -75,8 +94,14 @@ class Symbol:
     # When we first execute we need to make sure that we have no open position from last time
 
     def get_last_open_position(self):
+        
+        # Retriveing the last price and the quantity of the last sell order 
 
-        self.open_position_price = retrieve_order.get_last_open_position_price(self.symbol)
+        price_quantity = retrieve_order.get_last_open_position_price(self.symbol)
+
+        self.open_position_price = price_quantity[0]
+        self.open_position_quantity = price_quantity[1]
+
         if self.open_position_price > 0:
             self.open_position = True
         else:
@@ -104,7 +129,7 @@ class Symbol:
 
             if filt['filterType'] == 'LOT_SIZE':
 
-                min_quantity = math.floor(float(i['minQty']) * 100000000)
+                min_quantity = math.floor(float(filt['minQty']) * 100000000)
 
                 while min_quantity != 1:
                     min_quantity /= 10
@@ -254,7 +279,7 @@ class Symbol:
 
     # @Return a float with the correct quantity amount to place when creating order
 
-    def get_possible_quantity():
+    def get_possible_quantity(self):
 
         # Getting the current balance with quote currency
 
@@ -266,11 +291,12 @@ class Symbol:
         
         # Storing the exact quote amount format when placing order
 
-        quantity = self.get_floor_quantity(self.quote, self.quote_floor_quantity)
+        quantity = self.get_floor_quantity(quantity, self.quote_floor_precision)
         
         # Keeping tradk of the correct MAX quote amount between symbols
         
         usdt_wallet[self.symbol] = str(quantity)
+        self.open_position_price = quantity
 
         # Converting quote amount to coint amount
 
@@ -278,7 +304,7 @@ class Symbol:
         
         # Return the exact coin amount with the right format for Binance
 
-        return self.get_floor_quantity(self.coin, self.coin_floor_quantity)
+        return self.get_floor_quantity(quantity, self.coin_floor_precision)
 
 
     # Side will define if we are BUYING or SELLING, the order type will always be MARKET type for now
@@ -288,16 +314,16 @@ class Symbol:
 
         # Locking the mutex to make sure that no thread will interfer
 
-        mutex.acquire()
+        self.mutex.acquire()
 
         if side == 'SELL':
-            quantity = self.open_position_price
+            quantity = self.open_position_quantity
+            self.open_position_quantity = 0
             self.open_position_price = 0
             usdt_wallet[self.symbol] = '0'
         else:
             quantity = self.get_possible_quantity()
-            self.open_position_price = quantity
-        
+            self.open_position_quantity = quantity
         try :
 
             # Placing an order with Binance API return a json object
@@ -305,18 +331,18 @@ class Symbol:
             order = self.client.create_order(symbol=self.symbol, side=side, type=order_type, quantity=quantity)
         
         except BinanceAPIException as e:
-            mutex.release()
+            self.mutex.release()
             print(e)
             print("Error: couldn't place order for symbol " + self.symbol + " side " + side + " for " + quantity)
             return False
 
         # Release the mutex to free all thread that was blocked
 
-        mutex.release()
+        self.mutex.release()
 
         # Storing order in sql format to manipulate it after
 
-        insert_sql_order.insert_sql_data(order)
+        insert_order.insert_sql_data(order)
 
 
     # @Return Boolean, False will stop the thread because something went wrong

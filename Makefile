@@ -1,10 +1,10 @@
-NAME = BinanceBot
+NAME = McTrade.py
 
 all: $(NAME)
 
 #Running the basic command line arguments
 $(NAME):
-	./McTrade --file=config_files/basic_config
+	python3 $(NAME) --file=config_files/basic_config
 
 #Running test
 test:
