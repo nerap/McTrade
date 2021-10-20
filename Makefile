@@ -26,6 +26,9 @@ hook:
 	@git config core.hooksPath .githooks
 	@echo "\033[0;33mDone!"
 
+#For fresh clone
+setup: env init hook
+
 #Worfklow for action pushing github
 workflow: init env test
 
