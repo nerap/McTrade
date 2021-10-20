@@ -3,9 +3,23 @@
         {
             "symbol": "ETHUSDT",
             "quantity": 20,
-            "risk": 5,
-            "interval": "30m",
-            "lookback": "14 day ago UTC"
+            "risk": 25,
+            "interval": "1m",
+            "lookback": "100m"
+        },
+        {
+            "symbol": "BTCUSDT",
+            "quantity": 20,
+            "risk": 25,
+            "interval": "1m",
+            "lookback": "100m"
+        },
+        {
+            "symbol": "COMPUSDT",
+            "quantity": 20,
+            "risk": 25,
+            "interval": "1m",
+            "lookback": "100m"
         }
     ]
 }

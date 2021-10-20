@@ -1,5 +1,6 @@
 import os
 import sys
+from time import sleep
 import threading
 from .Symbol import Symbol
 from binance.client import Client
@@ -54,35 +55,38 @@ class McTrade:
 
     def main_loop_thread(self, symbol, client):
 
-        # Making sure that usdt_wallet is a global variable
+        # Making sure that mutex is available in all threads
 
-        global usdt_wallet
-
-        mutex.acquire()
+        global mutex
 
         # Instantiate Symbol object to init attributes
 
-        symbol = Symbol(symbol, client)
+        symbol = Symbol(symbol, client, mutex)
 
-        # Retrieving open_position_price in Symbol object to make sure that
-        # every symbol know how much quote is available
+        symbol.main_loop()
 
-        usdt_wallet[symbol.symbol] = str(symbol.open_position_price)
+    # Revieve a single thread based on the index
 
+    def revieve_thread(self, index):
+    
+        try:
 
-        mutex.release()
+            # Rebuilding the thread
 
-        # Calling the main_loop to keep them alive
+            self.threads.append(threading.Thread(target=self.main_loop_thread, args=(self.config[index], self.client, ), daemon=True))
+        
+            # Restarsting the thread
 
-        symbol.main_loop() 
+            self.threads[index].start()
+
+        except ValueError as e:
+            print(e)
+            print("Error: Unable to start the thread in starting_symbol_order function")
+            sys.exit(1)
 
     # Confiurating each thread
 
     def starting_symbol_order(self):
-
-        # Making the mutex available to each thread
-
-        global mutex
 
         try:
 
@@ -117,8 +121,15 @@ class McTrade:
 
                     if self.threads[index].is_alive() == False:
                     
-                        print("Thread Died")
-                        sys.exit(1)
+                        print("Restarting the thread in 5 seconds")
+
+                        sleep(5)
+
+                        # Revieve the thead that just die
+
+                        self.revieve_thread(index)
+                    
+                
         except KeyboardInterrupt:
 
             # Catching ctrl + c to exit all threads at the same time
