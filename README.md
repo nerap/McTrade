@@ -17,12 +17,16 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
+
+[![Size][size-shield]][repo-url]
+[![Linex][line-shield]][repo-url]
+[![Contributor][contributor-shield]][contributor-url]
+[![Downloads][downloads-shield]][repo-url]
 [![Issues][issues-shield]][issues-url]
-[![Size][size-shield]
-[![GNU License][license-shield]][license-url]
+[![License][lic-shield]][repo-url]
+[![Stars][stars-shield]][repo-url]
+
+
 
 
 
@@ -329,14 +333,12 @@ Use this space to list resources you find helpful and would like to give credit 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [size-shield]: https://img.shields.io/github/languages/code-size/nerap/McTrade
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/nerap/McTrade/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/nerap/McTrade/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/nerap/McTrade/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
+[repo-url]: https://github.com/nerap/McTrade/
+[line-shield]: https://img.shields.io/tokei/lines/github/nerap/McTrade
+[contributor-shield]: https://img.shields.io/github/contributors/nerap/McTrade?color=Bri
+[contributor-url]: https://github.com/nerap/McTrade/graphs/contributors
+[downloads-shield]: https://img.shields.io/github/downloads/nerap/McTrade/total?color=bri
+[issues-shield]: https://img.shields.io/github/issues/nerap/McTrade
 [issues-url]: https://github.com/nerap/McTrade/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/nerap/McTrade/LICENSE.txt
-[product-screenshot]: images/screenshot.png
+[lic-shield]: https://img.shields.io/github/license/nerap/McTrade?color=red
+[stars-shield]: https://img.shields.io/github/stars/nerap/McTrade
