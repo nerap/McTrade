@@ -14,6 +14,8 @@ MIN_QUANTITY = 5
 MAX_RISK = 25
 MIN_RISK = 3
 DEFALUT_RISK = 5
+DEFAULT_INTERVAL = "5m"
+DEFAULT_LOOKBACK = "7 day ago UTC"
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
@@ -44,9 +46,9 @@ def parse_quantity_risk(symbols):
             symbols[i]['quantity'] = math.floor(MAX_QUANTITY / len(symbols))
             quantity += symbols[i]['quantity']
         if not 'interval' in symbols[i]:
-            symbols[i]['interval'] = "30m"
+            symbols[i]['interval'] = DEFAULT_INTERVAL
         if not 'lookback' in symbols[i]:
-            symbols[i]['lookback'] = "14 day ago UTC"
+            symbols[i]['lookback'] = DEFAULT_LOOKBACK
     if quantity > MAX_QUANTITY:
         print('Invalid quantity the total quantity of your symbols is above 100% which is impossible check your configuration file')
         print('Quantity default value is ( Number_of_symbols / ' + str(MAX_QUANTITY) + ' )')

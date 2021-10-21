@@ -73,7 +73,7 @@ class McTrade:
 
             # Rebuilding the thread
 
-            self.threads.append(threading.Thread(target=self.main_loop_thread, args=(self.config[index], self.client, ), daemon=True))
+            self.threads[index] = threading.Thread(target=self.main_loop_thread, args=(self.config[index], self.client, ), daemon=True)
         
             # Restarsting the thread
 

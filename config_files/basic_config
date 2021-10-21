@@ -2,8 +2,7 @@
     "symbols": [
         {
             "symbol": "ETHUSDT",
-            "risk": 5,
-            "quantity": 50
+            "risk": 5
         },
         {
             "symbol": "BTCUSDT",
@@ -11,8 +10,7 @@
         },
         {
             "symbol": "XRPUSDT",
-            "risk": 5,
-            "quantity": 20
+            "risk": 5
         }
     ]
 }

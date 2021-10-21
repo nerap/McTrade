@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import ta
+import os
 import sys
 import math
 import numpy as np
@@ -74,10 +75,23 @@ class Symbol:
 
         self.interval = config['interval']
         self.lookback = config['lookback']
-       
-        # Storing the first fetch as DataFrame, not affected by financial indicators
+    
 
-        self.data_frame = fetch_symb.get_data_frame(self.client, self.symbol, self.interval, self.lookback)
+    # Connect to Binance API with a Client
+
+    def connect_binance_client(api_key, secret_api_key):
+
+    # @Return Bincance Client object
+
+        try:
+
+            return Client(api_key, secret_api_key)
+        
+        except BinanceAPIException as e:
+        
+            print(e)
+            print("Error: cannot create a connection to Binance with those api_key")
+            sys.exit(1)
 
     # Sum up the USDT wallet
     # @Return the total wallet values as float 
@@ -141,7 +155,30 @@ class Symbol:
     # Fetching all data we need and apply each finicial indicators we need
     
     def update_data_frame(self):
-        self.data_frame = fetch_symb.get_data_frame(self.client, self.symbol, self.interval, self.lookback)
+        try :
+
+            self.data_frame = fetch_symb.get_data_frame(self.client, self.symbol, self.interval, self.lookback)
+
+        # After a while the client might reset or timeout, we are making sure to reconnect
+
+        except BinanceAPIException as e:
+
+            # Create a new client to make sure that everything is alright
+    
+            print(self.symbol + " is reconnecting to the client in 10 seconds")
+
+            sleep(10)
+
+            try :
+
+                self.client = Symbol.connect_binance_client(os.environ.get('api_key'), os.environ.get('secret_api_key'))
+                return self.update_data_frame()
+            
+            except BinanceAPIException as e:
+            
+                print (e)
+                print ("Error: the client can't connect to binance with those API Keys")
+
         self.caculate_stoch_rsi_macd()
 
     # Applying STOCH + RSI + MACD algorithm 

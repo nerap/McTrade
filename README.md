@@ -267,14 +267,14 @@ Nevertheless you still can, see this doc https://python-binance.readthedocs.io/e
 McTrade is fetching data from Binance API and the data have an interval for example, 1 minutes between each price of the BTC, or 30 minutes even 1 day between each data.
 That doesn't mean that when you fetch a data with 1 day interval that you won't have the actual current price of the BTC, you will have the each price from now with an "interval" with a certain "lookback".
 
-*(Default value is "30m")*
+*(Default value is "5m")*
 
 ### **-The "lookback"**
 
 Like interval, lookback has special format that you will need to stick to.
 Reprensent how far you will look for you data, example 100 minutes, 1 week, 1 year. McTrade will use data 1 year old with a certain "interval" between each of them.
 
-*(Default value is "14 day ago UTC")*
+*(Default value is "7 day ago UTC")*
 
 
 <!-- ROADMAP -->
