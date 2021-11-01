@@ -6,11 +6,11 @@
         },
         {
             "symbol": "BTCUSDT",
-            "quantity": 30
+            "quantity": 25
         },
         {
             "symbol": "XRPUSDT",
-            "quantity": 25
+            "quantity": 30
         }
     ]
 }
