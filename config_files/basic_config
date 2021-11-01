@@ -1,0 +1,16 @@
+{
+    "symbols": [
+        {
+            "symbol": "ETHUSDT",
+            "quantity": 45
+        },
+        {
+            "symbol": "BTCUSDT",
+            "quantity": 30
+        },
+        {
+            "symbol": "XRPUSDT",
+            "quantity": 25
+        }
+    ]
+}

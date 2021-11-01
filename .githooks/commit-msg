@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# regex to validate in commit msg
+commit_regex='^(feat|fix|doc|add|update|delete)(\(.+\))?: .+|Merge.+'
+
+# if the commit message is different from the regex
+if ! grep -iqE "$commit_regex" "$1"; then
+    # echo error
+    echo -e "\Error: your message does not respect the commit pattern: 
+    $commit_regex" >&2
+    # then exit
+    exit 1
+fi
+
+exit 0

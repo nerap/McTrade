@@ -1,0 +1,20 @@
+#!/bin/bash
+LC_ALL=C
+
+local_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+valid_branch_regex="^(feature|bugfix|improvement|release|hotfix|support)\/[a-z0-9._-]+$"
+
+message="There is something wrong with your branch name. Branch names in this project must adhere to this contract: 
+    \ $valid_branch_regex. Your commit will be rejected. 
+    \ You need to rename your branch to a valid name if you want to push."
+
+if [ "master" != $local_branch ]; then
+    if [[ ! $local_branch =~ $valid_branch_regex ]]
+    then
+        echo "$message"
+        exit 1
+    fi
+fi
+
+exit 0

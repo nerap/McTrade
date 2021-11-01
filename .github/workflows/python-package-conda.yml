@@ -1,0 +1,25 @@
+name: Python Binance API Bot
+
+on:
+  release:
+    types: [created]
+  push:
+    branches:
+      - main
+      - test
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+    - name: workflow
+      run: |
+        make workflow
