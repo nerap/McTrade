@@ -42,6 +42,7 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#strategy">Strategy</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -262,6 +263,28 @@ This will make sure that the line in d1 period crossed just for 1 hour then cros
 Same as LOOKBACK but it will work with INTERVAL_VALIDATE
 
 *(Default value is "5 day ago UTC")*
+
+## Strategy
+
+McTrade is really simple and using a simple trading algorithm.
+MACD with a 12 and 26 period with a 1 day interval (can be modified)
+
+        Moving average convergence divergence (MACD) is a trend-following momentum
+        indicator that shows the relationship between two moving averages of a security’s price.
+        The MACD is calculated by subtracting the 26-period exponential 
+        moving average (EMA) from the 12-period EMA.
+
+        Formula :
+        
+                  MACD = N-Period EMA − N2-Period EMA
+        
+        Where N = 12 and N2 = 26 for example
+        MACD is calculated by subtracting the long-term EMA (26 periods) from the short-term EMA (12 periods).
+        An exponential moving average (EMA) is a type of moving average(MA)
+        that places a greater weight and significance on the most recent data point
+
+You can't change the shortEMA and longEMA (unless you change the code directly) but you can change the period (INTERVAL variable), the default value is 1 day, but you can put 1 minute, 1 hour, 2 day, but don't do it unless you know what you are doing.
+Default value are the best I found, so stick to it.
 
 ## Roadmap
 
