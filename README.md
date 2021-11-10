@@ -25,7 +25,6 @@
   </p>
 </div>
 
-
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -136,9 +135,7 @@ The format is a json object, it's a json file.
             },
             {
                 "symbol": "BTCUSDT",
-                "quantity": 20,
-                "risk": 7
-            },
+                "quantity": 20
             {
                 "symbol": "XRPUSDT",
                 "quantity": 50
@@ -189,8 +186,7 @@ Each element of symbols array in the configuration file, can take 3 parameters (
         "symbols": [
             {
                 "symbol": "ETHUSDT",
-                "quantity": 20,
-                "risk": 4
+                "quantity": 20
             }
         ]
     }

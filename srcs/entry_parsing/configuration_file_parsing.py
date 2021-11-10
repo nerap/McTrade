@@ -11,9 +11,6 @@ from dotenv import load_dotenv
 
 MAX_QUANTITY = 100
 MIN_QUANTITY = 5
-MAX_RISK = 25
-MIN_RISK = 3
-DEFAULT_RISK = 5
 DEFAULT_INTERVAL = "1d"
 DEFAULT_LOOKBACK = "180 day ago UTC"
 DEFAULT_INTERVAL_VALIDATE = "6h"
@@ -23,7 +20,7 @@ url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
 # Making sure that the symbol in the configuration file is valid for Binance
 
-def parse_quantity_risk(symbols):
+def parse_attributes(symbols):
     quantity = 0
     for i in range(len(symbols)):
         if 'quantity' in symbols[i]:
@@ -95,7 +92,7 @@ def parse_config_file(config_file):
     else:
         print("Error: configuration file doesn't have the right key")
         sys.exit(1)
-    config_object['symbols'] = parse_quantity_risk(config_object['symbols'])
+    config_object['symbols'] = parse_attributes(config_object['symbols'])
     for symbol in config_object['symbols']:
         parse_symbol(symbol['symbol'])
         symbols.append(symbol)
