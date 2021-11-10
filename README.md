@@ -1,22 +1,4 @@
 <div id="top"></div>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 
 [![Size][size-shield]][repo-url]
 [![Linex][line-shield]][repo-url]
@@ -27,10 +9,6 @@
 [![Stars][stars-shield]][repo-url]
 
 
-
-
-
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/nerap/McTrade">
@@ -47,9 +25,6 @@
   </p>
 </div>
 
-
-
-<!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
@@ -75,8 +50,6 @@
 </details>
 
 
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
 McTrade can run 24/7 on a server, laptop, anywhere.. his main purpose is to make smart trade.
@@ -102,7 +75,6 @@ The techs are really simple that's why he is really portable and has not a high 
 * [SQLite](https://www.sqlite.org/index.html)
 * [Docker](https://www.docker.com/) (Not implemted yet)
 
-<!-- GETTING STARTED -->
 ## Getting Started
 
 Do not panic everything will be alright, really simple!
@@ -137,8 +109,6 @@ You need of course python 3.6+ to launch everything, and pip3 to install package
 6. Here we go you successfully installed McTrade !
 
 
-
-<!-- USAGE EXAMPLES -->
 ## Usage
 
 McTrade works like any other script.
@@ -165,9 +135,7 @@ The format is a json object, it's a json file.
             },
             {
                 "symbol": "BTCUSDT",
-                "quantity": 20,
-                "risk": 7
-            },
+                "quantity": 20
             {
                 "symbol": "XRPUSDT",
                 "quantity": 50
@@ -218,13 +186,11 @@ Each element of symbols array in the configuration file, can take 3 parameters (
         "symbols": [
             {
                 "symbol": "ETHUSDT",
-                "quantity": 20,
-                "risk": 4
+                "quantity": 20
             }
         ]
     }
 ```
-<!-- MANDATORY -->
 
 ## Mandatory parameters
 
@@ -237,8 +203,6 @@ You can only trade crypto that end with USDT, because USDT is the only currency 
 *So if you want to trade, you need to make sure to have your wallet converted to USDT, because this is how McTrade will place his order.
 Each transaction is a minimum of 10 USDT (10 dollars), so you need at least 20 USDT to trade without being worried about the minimum about.*
 
-<!-- OPTIONNAL -->
-
 ## Optionnal parameters:
 
 ### **-The "quantity"**
@@ -249,14 +213,6 @@ McTrade won't run if the sum of your quantity is above 100 %
 ### "quantity" must be between 10 and 100.
 
 *(If not quantity is present, the default value will be ( 100 / numbers of symbols)) so for instance if you want to trade 4 crypto simultaneously and none of them has precise their quantity each of them will use 25 % of your maximum wallet)*
-
-### **-The "risk"**
-
-Represent how greedy your bot will be, I don't recommend using this parameters neither, because the greater he is the more unpredictable the McTrade will be if you really want to use it, I suggest to put him between 3 and 7 MAXIMUM.
-
-### "risk" must be between 3 and 25
-
-*(Default value is 5)*
 
 ## WARNING THOSE 2 PARAMETERS ARE NOT RECOMMEND TO MODIFY
 
@@ -276,8 +232,6 @@ Reprensent how far you will look for you data, example 100 minutes, 1 week, 1 ye
 
 *(Default value is "7 day ago UTC")*
 
-
-<!-- ROADMAP -->
 ## Roadmap
 
 - [] Add another currency than USDT
@@ -288,8 +242,6 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-<!-- CONTRIBUTING -->
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -303,16 +255,11 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-
-
-
-<!-- LICENSE -->
 ## License
 
 Distributed under the GNU License. See `LICENSE.txt` for more information.
 
 
-<!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
 Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
@@ -326,9 +273,6 @@ Use this space to list resources you find helpful and would like to give credit 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [size-shield]: https://img.shields.io/github/languages/code-size/nerap/McTrade
 [repo-url]: https://github.com/nerap/McTrade/
 [line-shield]: https://img.shields.io/tokei/lines/github/nerap/McTrade

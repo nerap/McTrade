@@ -3,14 +3,6 @@
         {
             "symbol": "ETHUSDT",
             "quantity": 45
-        },
-        {
-            "symbol": "BTCUSDT",
-            "quantity": 25
-        },
-        {
-            "symbol": "XRPUSDT",
-            "quantity": 30
         }
     ]
 }
