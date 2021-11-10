@@ -224,6 +224,18 @@ The MAX_QUANTITY defined is the configuration file is the maximum quantity of yo
 ## WARNING THOSE 4 PARAMETERS ARE NOT RECOMMEND TO MODIFY, IF YOU DON'T UNDERSTAND WHAT MACD AND SIGNAL ARE, SKIP
 
 Nevertheless you still can, see this doc https://python-binance.readthedocs.io/en/latest/constants.html
+This is how much you can modify SYMBOL field. You can specify each symbol on wich period you want McTrade to trade with, lower value will mean faster trade.
+
+```nginx
+   SYMBOL {
+       SYMBOL BTCUSDT;
+       QUANTITY 20;
+       INTERVAL 1d;
+       LOOKBACK 60 day ago UTC;
+       INTERVAL_VALIDATE 6h;
+       LOOKBACK_VALIDATE 5 day ago UTC;
+    }
+```
 
 ### **-The "INTERVAL"**
 
