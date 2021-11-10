@@ -268,7 +268,8 @@ class Symbol:
         self.buy_sell()
         # Printing last row of the data frame
 
-        print("\t\t" + self.symbol)
+        print('\n------------------------------------------\n')
+        print("\t\t" + self.symbol + '\n')
         print("Close -> " + str(self.data_frame.Close.iloc[-1]))
         print("Open Position -> " + str(self.open_position))
         print("Macd " + self.interval + " -> " + str(round(self.data_frame.Macd.iloc[-1], 3)) + " Signal " + self.interval + " -> " + str(round(self.data_frame.Signal.iloc[-1], 3)))
