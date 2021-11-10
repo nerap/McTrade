@@ -25,12 +25,6 @@ default_values_dic = {
     'DEFAULT_LOOKBACK_VALIDATE' : '5 day ago UTC'
 }
 
-MAX_QUANTITY = 100
-MIN_QUANTITY = 5
-DEFAULT_INTERVAL = "1d"
-DEFAULT_LOOKBACK = "180 day ago UTC"
-DEFAULT_INTERVAL_VALIDATE = "6h"
-DEFAULT_LOOKBACK_VALIDATE = "7 day ago UTC"
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
