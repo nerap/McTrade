@@ -191,7 +191,7 @@ You can add as much as Symbol you want, but you need to take in mind that each t
 I don't recommend, and even if you do it it won't work well, to trade with only 10 USD (equivalent), because, the moment you trade, you won't be able to sell back what you bought, for 3 reason:
 ### **First**
 Each transaction comes  with a Binance Tax (0.1% the highest possible), so if you bought ETH for example, your will have 9.99 USD of ETH right after your Buying order, so you won't be able to sell 9.99 USD of ETH because the transaction has to be above 10 USD.
-### **Second
+### **Second**
 Crypto price is moving really fast, so if you buy, let's say for 10.02 USD of ETH, you will have enough to sell your ETH right after, unless, the price change and the ETH you bought doesn't worth 10 USD anymore, so you won't be able to sell it.
 ### **Third**
 Some crypto doesn't let you buy the amount you want, like you can't buy 1.5 DOGE, you can only buy 1 or 2 DOGE, so, when you will buy 3 DOGE for example, you will have 2.997 right after your buying order, so if you want to sell your DOGE you will be able to only sell 2 DOGE not 2.997.
