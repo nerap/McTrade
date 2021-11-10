@@ -16,6 +16,8 @@ MIN_RISK = 3
 DEFAULT_RISK = 5
 DEFAULT_INTERVAL = "1d"
 DEFAULT_LOOKBACK = "180 day ago UTC"
+DEFAULT_INTERVAL_VALIDATE = "6h"
+DEFAULT_LOOKBACK_VALIDATE = "7 day ago UTC"
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
@@ -24,16 +26,6 @@ url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 def parse_quantity_risk(symbols):
     quantity = 0
     for i in range(len(symbols)):
-        if 'risk' in symbols[i]:
-            if symbols[i]['risk'] < MIN_RISK or symbols[i]['risk'] > MAX_RISK:
-                print('Invalid risk ' + str(symbols[i]['risk']) + ' for symbol ' + symbols[i]['symbol'])
-                print('Risk should be between >= ' + str(MIN_RISK) + ' and <= ' + str(MAX_RISK) + '!')
-                print('Default value is ' + DEFAULT_RISK)
-                sys.exit(1)
-            else:
-                symbols[i]['risk'] = math.floor(symbols[i]['risk'])
-        else:
-            symbols[i]['risk'] = DEFAULT_RISK
         if 'quantity' in symbols[i]:
             if symbols[i]['quantity'] <= MIN_QUANTITY or symbols[i]['quantity'] > MAX_QUANTITY:
                 print('Invalid quantity ' + str(symbols[i]['quantity']) + ' for symbol ' + symbols[i]['symbol'])
@@ -49,6 +41,10 @@ def parse_quantity_risk(symbols):
             symbols[i]['interval'] = DEFAULT_INTERVAL
         if not 'lookback' in symbols[i]:
             symbols[i]['lookback'] = DEFAULT_LOOKBACK
+        if not 'interval_validate' in symbols[i]:
+            symbols[i]['interval_validate'] = DEFAULT_INTERVAL_VALIDATE
+        if not 'lookback_validate' in symbols[i]:
+            symbols[i]['lookback_validate'] = DEFAULT_LOOKBACK_VALIDATE
     if quantity > MAX_QUANTITY:
         print('Invalid quantity the total quantity of your symbols is above 100% which is impossible check your configuration file')
         print('Quantity default value is ( Number_of_symbols / ' + str(MAX_QUANTITY) + ' )')

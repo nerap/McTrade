@@ -60,6 +60,8 @@ class Symbol:
         self.quote_floor_precision = 2
         self.interval = config['interval']
         self.lookback = config['lookback']
+        self.interval_validate = config['interval_validate']
+        self.lookback_validate = config['lookback_validate']
     
     # Connect to Binance API with a Client
 
@@ -125,6 +127,7 @@ class Symbol:
     def update_data_frame(self):
         try :
             self.data_frame = fetch_symb.get_data_frame(self.client, self.symbol, self.interval, self.lookback)
+            self.data_frame_validate = fetch_symb.get_data_frame(self.client, self.symbol, self.interval_validate, self.lookback_validate)
 
         # After a while the client might reset or timeout, we are making sure to reconnect
         except BinanceAPIException as e:
@@ -164,6 +167,12 @@ class Symbol:
 
         self.data_frame['Macd'] = shortEMA - longEMA
         self.data_frame['Signal'] = self.data_frame.Macd.ewm(span=9, adjust=False).mean()
+
+        shortEMA_validate = self.data_frame_validate.Close.ewm(span=12, adjust=False).mean()
+        longEMA_validate = self.data_frame_validate.Close.ewm(span=26, adjust=False).mean()
+
+        self.data_frame_validate['Macd'] = shortEMA_validate - longEMA_validate
+        self.data_frame_validate['Signal'] = self.data_frame_validate.Macd.ewm(span=9, adjust=False).mean()
 
         # Since we are playing with days, we need to remove data that can't be counted, those with NA
         self.data_frame.dropna(inplace=True)
@@ -222,6 +231,15 @@ class Symbol:
         # Storing order in sql format to manipulate it after
         insert_order.insert_sql_data(order)
 
+    def check_price(self, side):
+        if side == Client.SIDE_BUY: 
+            if self.data_frame_validate.Macd.iloc[-1] > self.data_frame_validate.Signal.iloc[-1] and self.data_frame_validate.Macd.iloc[-2] > self.data_frame_validate.Signal.iloc[-2]:
+               return True
+        elif side == Client.SIDE_SELL:
+            if self.data_frame_validate.Macd.iloc[-1] < self.data_frame_validate.Signal.iloc[-1] and self.data_frame_validate.Macd.iloc[-2] < self.data_frame_validate.Signal.iloc[-2]:
+                return True
+        return False
+
     def buy_sell(self):
         self.data_frame['Buy'] = 0
         self.data_frame['Sell'] = 0
@@ -230,11 +248,11 @@ class Symbol:
         for i in range(26, len(self.data_frame)):
             if self.data_frame.Macd[i] > self.data_frame.Signal[i]:
                 if flag != 1:
-                    self.data_frame.Buy.iloc[i] = 1
+                    self.data_frame.Buy.iloc._setitem_with_indexer(i, 1)
                     flag = 1
             if self.data_frame.Macd[i] < self.data_frame.Signal[i]:
                 if flag != 0:
-                    self.data_frame.Sell.iloc[i] = 1
+                    self.data_frame.Sell.iloc._setitem_with_indexer(i, 1)
                     flag = 0
 
     # @Return Boolean, False will stop the thread because something went wrong
@@ -252,13 +270,14 @@ class Symbol:
         print("\t\t" + self.symbol)
         print("Close -> " + str(self.data_frame.Close.iloc[-1]))
         print("Open Position -> " + str(self.open_position))
-        print("Macd -> " + str(round(self.data_frame.Macd.iloc[-1], 3)) + " Signal -> " + str(round(self.data_frame.Signal.iloc[-1], 3)))
+        print("Macd " + self.interval + " -> " + str(round(self.data_frame.Macd.iloc[-1], 3)) + " Signal " + self.interval + " -> " + str(round(self.data_frame.Signal.iloc[-1], 3)))
+        print("Macd " + self.interval_validate + " -> " + str(round(self.data_frame_validate.Macd.iloc[-1], 3)) + " Signal " + self.interval_validate + " -> " + str(round(self.data_frame_validate.Signal.iloc[-1], 3)))
 
         # Making sure if we are not in open_position and we want to place an order with .Buy or .Sell
-        if self.open_position == False and self.data_frame.Buy.iloc[-2]:
+        if self.open_position == False and (self.data_frame.Buy.iloc[-1] or self.data_frame.Buy.iloc[-2]) and self.check_price(Client.SIDE_BUY):
             self.open_position = True
             return self.place_order(Client.SIDE_BUY)
-        elif self.open_position == True and self.data_frame.Sell.iloc[-2]:
+        elif self.open_position == True and (self.data_frame.Sell.iloc[-1] or self.data_frame.Sell.iloc[-2]) and self.check_price(Client.SIDE_SELL):
             self.open_position = False
             return self.place_order(Client.SIDE_SELL)
         return True

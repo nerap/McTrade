@@ -1,6 +1,7 @@
 import os
 import sys
 from time import sleep
+import pandas as pd
 import threading
 from .Symbol import Symbol
 from binance.client import Client
@@ -19,6 +20,7 @@ class McTrade:
 
     def __init__(self, config):
 
+        pd.options.mode.chained_assignment = None
         self.config = config
 
         # Storing each symbols to keep track of every single thread
