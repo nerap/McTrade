@@ -66,7 +66,6 @@ Trading is not like roulette or black jack, so McTrade won't bet your money rand
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-
 ## Built With
 
 The techs are really simple that's why he is really portable and has not a high memory usage !
@@ -84,14 +83,14 @@ Do not panic everything will be alright, really simple!
 You need of course python 3.6+ to launch everything, and pip3 to install package
 * apt-get
   ```sh
-  $ sudo apt-get update
-  $ sudo apt-get install python3.6
+  $ sudo apt update
+  $ sudo apt install python3.6
   $ sudo apt install python3-pip
   ```
 
 ### Installation
 
-1. First get your account at [Binance](https://www.binance.com/fr)
+1. First get your account at [Binance](https://www.binance.com/en)
 2. Put money on your wallet (50 USD or EUR ) is recommended but not mandatory you will see why. 
 3. Clone the repo
    ```sh
@@ -121,80 +120,84 @@ The main argument that McTrade need is a configuration file
 Default config files are in config_file/ directory
 
  ```sh
-   python3 McTrady.py -f config_files/basic_config
+   python3 McTrady.py -f config_files/basic_config.conf
    ```
 
-The "tricky" part comes now, the configuration file. No extension needed but a really strict format is expected but unusual.
-The format is a json object, it's a json file.
+The configuration is inspired by nginx configuration file format. The parser can be found [there](https://pypi.org/project/nginxparser_eb/)
+This is really nginx but in caps lock, don't try to break the parser or add useless things, the configuration file is really straight foward.
  
- ```json
-    {
-        "symbols": [
-            {
-                "symbol": "ETHUSDT"
-            },
-            {
-                "symbol": "BTCUSDT",
-                "quantity": 20
-            {
-                "symbol": "XRPUSDT",
-                "quantity": 50
-            }
-        ]
-    }
-```
+ ```nginx
+    # DON'T MODIFY THIS IF YOU HAVE NO IDEA HOW THE CODE IS WORKING
+    MAX_QUANTITY 100;
+    MIN_QUANTITY 5;
+    DEFAULT_INTERVAL 1d;
+    DEFAULT_LOOKBACK 180 day ago UTC;
+    DEFAULT_INTERVAL_VALIDATE 6h;
+    DEFAULT_LOOKBACK_VALIDATE 7 day ago UTC;
 
-You have to respect that symbols is the key to yours symbols array, so whatever you are trying to do keep "symbols" as the main key to your array.
-
-Like this 
-
+    # What you will modify as your will
     
-```json
-    {
-        "symbols": [
-            {
-                "symbol": "ETHUSDT"
-            }
-        ]
+    SYMBOL {
+       SYMBOL ETHUSDT;
+       QUANTITY 33;
+    }
+
+    SYMBOL {
+       SYMBOL XRPUSDT;
+       QUANTITY 33;
+    }
+    
+    SYMBOL {
+       SYMBOL BTCUSDT;
+       QUANTITY 34;
     }
 ```
 
-or like this
+Those first variable are basically constant and will be used when this file you will be parsed.
+I don't recommend you to touch then useless you know what is happening in the code and how the value will affect the entire programm.
 
-```json
-    {
-        "symbols": [
-            {
-                "symbol": "ETHUSDT"
-            },
-            {
-                "symbol": "BTCUSDT"
-            },
-            {
-                "symbol": "DOGEUSDT"
-            },
-            {
-                "symbol": "COMPUSDT"
-            }
-        ]
+Now the part that you will modify as your will is SYMBOL field, there is only 2 paramters that I recommend you to modify :
+
+SYMBOL :
+  The symbol that will be trade, so a pair of two crypto 'BTCUSDT', 'ETHUSDT', etc.. 
+  McTrade IS ONLY WORKING WITH USDT CRYPTO SO YOU CAN'T PUT ANY OTHER CRYPTO RATHER THAN USDT.
+
+QUANTITY : 
+  The amount is percentage of your maximum wallet you will give to this Symbol
+
+An example :
+
+```nginx
+   SYMBOL {
+       SYMBOL ETHUSDT;
+       QUANTITY 25;
     }
 ```
-Each element of symbols array in the configuration file, can take 3 parameters (5 in reality but I don't recommend to touch them unless you really know what you are doing).
 
-```json
-    {
-        "symbols": [
-            {
-                "symbol": "ETHUSDT",
-                "quantity": 20
-            }
-        ]
+McTrade will trade ETH with USDT currency, with 25 % of your maximum wallet.
+You can remove QUANTITY field if you want, but the quantity will be replace by the MIN_QUANTITY defined earlier.
+For instance, you can remove eveyrthing in SYMBOL {} field like this.
+
+```nginx
+   SYMBOL {
+       SYMBOL BTCUSDT;
     }
 ```
+
+So here the QUANTITY will be 5 because the field is empty.
+
+This is the bare minimum to launch McTrade, the other fields will be replace by the default value, defined above.
+You can add as much as Symbol you want, but you need to take in mind that each transaction has to be at least 10 USD equivalent, so if you have 100 USD, you can trade 10 symbols maximum (in therory)
+I don't recommend, and even if you do it it won't work well, to trade with only 10 USD (equivalent), because, the moment you trade, you won't be able to sell back what you bought, for 3 reason:
+**First**, each transaction comes  with a Binance Tax (0.1% the highest possible), so if you bought ETH for example, your will have 9.99 USD of ETH right after your Buying order, so you won't be able to sell 9.99 USD of ETH because the transaction has to be above 10 USD.
+**Second**, crypto price is moving really fast, so if you buy, let's say for 10.02 USD of ETH, you will have enough to sell your ETH right after, unless, the price change and the ETH you bought doesn't worth 10 USD anymore, so you won't be able to sell it.
+**Third**, some crypto doesn't let you buy the amount you want, like you can't buy 1.5 DOGE, you can only buy 1 or 2 DOGE, so, when you will buy 3 DOGE for example, you will have 2.997 right after your buying order, so if you want to sell your DOGE you will be able to only sell 2 DOGE not 2.997.
+So for me the BARE BARE minimum will be 15 USD for me per symbol, and with symbol that let you buy with a certain precision.
+And even trader with only 15 USD is really not worth it, keep it and buy yourself a Big Mac honestly.
 
 ## Mandatory parameters
 
-### **-The "symbol"**
+### **-The "SYMBOL"**
 
 *The only this to worry about is each element in your "symbols" array.
 You have to got at least 1 symbol (pair of coin and quote -> BTC + USDT , ETH + USDT, etc..)
@@ -205,32 +208,48 @@ Each transaction is a minimum of 10 USDT (10 dollars), so you need at least 20 U
 
 ## Optionnal parameters:
 
-### **-The "quantity"**
+### **-The "QUANTITY"**
 
 How many MAX % of your USDT wallet this McTrade will trade with, if you specify 20, 20 percent of your MAX % so if you 100 USDT, 20 will be dedicated to trade, (not more not less).
 McTrade won't run if the sum of your quantity is above 100 %
+The MAX_QUANTITY defined is the configuration file is the maximum quantity of your wallet you let McTrade use for all Symbol combined.
 
-### "quantity" must be between 10 and 100.
+### "QUANTITY" must be between 1 and 100.
 
-*(If not quantity is present, the default value will be ( 100 / numbers of symbols)) so for instance if you want to trade 4 crypto simultaneously and none of them has precise their quantity each of them will use 25 % of your maximum wallet)*
+*(If not quantity is present, the default value will be the MIN_QUANTITY defined in the configuration file)*
 
-## WARNING THOSE 2 PARAMETERS ARE NOT RECOMMEND TO MODIFY
+## WARNING THOSE 4 PARAMETERS ARE NOT RECOMMEND TO MODIFY, IF YOU DON'T UNDERSTAND WHAT MACD AND SIGNAL ARE, SKIP
 
 Nevertheless you still can, see this doc https://python-binance.readthedocs.io/en/latest/constants.html
 
-### **-The "interval"**
+### **-The "INTERVAL"**
 
 McTrade is fetching data from Binance API and the data have an interval for example, 1 minutes between each price of the BTC, or 30 minutes even 1 day between each data.
 That doesn't mean that when you fetch a data with 1 day interval that you won't have the actual current price of the BTC, you will have the each price from now with an "interval" with a certain "lookback".
 
-*(Default value is "5m")*
+*(Default value is "1d")*
 
-### **-The "lookback"**
+### **-The "LOOKBACK"**
 
 Like interval, lookback has special format that you will need to stick to.
 Reprensent how far you will look for you data, example 100 minutes, 1 week, 1 year. McTrade will use data 1 year old with a certain "interval" between each of them.
 
-*(Default value is "7 day ago UTC")*
+*(Default value is "180 day ago UTC")*
+
+### **-The "INTERVAL_VALIDATE"**
+
+Same as INTERVAL but with a period inferior as INTERVAL, it will be a MACD and SIGNAL line like the previous one and will validate if you really want to buy now.
+For example, McTrade is using MACD algorithm, but if you just buy or sell when the line cross you will sometimes have way more bad trade without the other MACD with a shorter perdiod.
+If the MACD and SIGNAL with d1 period are crossing and MACD and SIGNAL with h6 period crossed N-2, you BUY/SELL
+This will make sure that the line in d1 period crossed just for 1 hour then cross again and giving a useless buying and selling order, that will be a loss. 
+
+*(Default value is "6h")*
+
+### **-The "LOOKBACK_VALIDATE"**
+
+Same as LOOKBACK but it will work with INTERVAL_VALIDATE
+
+*(Default value is "5 day ago UTC")*
 
 ## Roadmap
 
