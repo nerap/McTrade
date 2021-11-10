@@ -199,13 +199,13 @@ class Symbol:
         # H14 = The highest price traded during the same 14-day period
         # K = The current value of the stochastic indicator​
 
-        self.data_frame['K'] = ta.momentum.stoch(self.data_frame.High, self.data_frame.Low, self.data_frame.Close, window=14, smooth_window=3)
+        #self.data_frame['K'] = ta.momentum.stoch(self.data_frame.High, self.data_frame.Low, self.data_frame.Close, window=14, smooth_window=3)
 
         # Notably, K is referred to sometimes as the fast stochastic indicator.
         # The "slow" stochastic indicator is taken as
         # D = 3-period moving average of K
         
-        self.data_frame['D'] = self.data_frame['K'].rolling(3).mean()
+        #self.data_frame['D'] = self.data_frame['K'].rolling(3).mean()
 
         # The relative strength index (RSI) is a momentum indicator used in technical analysis
         # that measures the magnitude of recent price changes to evaluate overbought or oversold
@@ -222,7 +222,7 @@ class Symbol:
         # calculations of average gain, and periods when the price increases are
         # counted as 0 for the calculation of average losses.
 
-        self.data_frame['RSI'] = ta.momentum.rsi(self.data_frame.Close, window=14)
+        #self.data_frame['RSI'] = ta.momentum.rsi(self.data_frame.Close, window=14)
 
         # Moving average convergence divergence (MACD) is a trend-following momentum
         # indicator that shows the relationship between two moving averages of a security’s price.
@@ -239,7 +239,13 @@ class Symbol:
         # that places a greater weight and significance on the most recent data point
 
 
-        self.data_frame['MACD'] = ta.trend.macd_diff(self.data_frame.Close)
+        #self.data_frame['MACD'] = ta.trend.macd_diff(self.data_frame.Close)
+
+        shortEMA = self.data_frame.Close.ewm(span=12, adjust=False).mean()
+        longEMA = self.data_frame.Close.ewm(span=26, adjust=False).mean()
+
+        self.data_frame['Macd'] = shortEMA - longEMA
+        self.data_frame['Signal'] = self.data_frame.Macd.ewm(span=9, adjust=False).mean()
 
         # Since we are playing with days, we need to remove data that can't be counted, those with NA
 
@@ -370,7 +376,7 @@ class Symbol:
         except BinanceAPIException as e:
             self.mutex.release()
             print(e)
-            print("Error: couldn't place order for symbol " + self.symbol + " side " + side + " for " + quantity)
+            print("Error: couldn't place order for symbol " + self.symbol + " side " + side + " for " + str(quantity))
             return False
 
         # Release the mutex to free all thread that was blocked
@@ -380,6 +386,22 @@ class Symbol:
         # Storing order in sql format to manipulate it after
 
         insert_order.insert_sql_data(order)
+
+    def buy_sell(self):
+        self.data_frame['Buy'] = 0
+        self.data_frame['Sell'] = 0
+        flag = -1
+        
+        for i in range(26, len(self.data_frame)):
+            if self.data_frame.Macd[i] > self.data_frame.Signal[i]:
+                if flag != 1:
+                    self.data_frame.Buy[i] = 1
+                    flag = 1
+            if self.data_frame.Macd[i] < self.data_frame.Signal[i]:
+                if flag != 0:
+                    self.data_frame.Sell[i] = 1
+                    flag = 0
+
 
 
     # @Return Boolean, False will stop the thread because something went wrong
@@ -392,27 +414,23 @@ class Symbol:
 
         # Applying Buy and Sell columns to decide wether or not we should place an order
 
-        self.decide()
+        self.buy_sell()
 
         # Printing last row of the data frame
 
         print("\t\t" + self.symbol)
         print("Close -> " + str(self.data_frame.Close.iloc[-1]))
-        print("K -> " + str(round(self.data_frame['K'].iloc[-1], 2)) + " D -> " + str(round(self.data_frame['D'].iloc[-1], 2)))
-        print("RSI -> " + str(round(self.data_frame.RSI.iloc[-1], 2)) + " MACD -> " + str(round(self.data_frame.MACD.iloc[-1], 3)))
-        print(str(self.data_frame.Buy_trigger.iloc[-1]) + " | " + str(self.data_frame.Sell_trigger.iloc[-1]))
+        print("Open Position -> " + self.open_position)
+        print("Macd -> " + str(round(self.data_frame.Macd.iloc[-1], 3)) + " Signal -> " + str(round(self.data_frame.Signal.iloc[-1], 3)))
 
         # Making sure if we are not in open_position and we want to place an order with .Buy or .Sell
 
-        if self.open_position == False and self.data_frame.Buy.iloc[-1]:
-
+        if self.open_position == False and self.data_frame.Buy.iloc[-2]:
             self.open_position = True
             return self.place_order(Client.SIDE_BUY)
-        elif self.open_position == True and self.data_frame.Sell.iloc[-1]:
-
+        elif self.open_position == True and self.data_frame.Sell.iloc[-2]:
             self.open_position = False
             return self.place_order(Client.SIDE_SELL)
-
         return True
     
     # Main loop of the thread Symbol, sleep each time we try to trade
@@ -421,4 +439,4 @@ class Symbol:
         while True:
             if self.strategy() == False:
                 return
-            sleep(2)
+            sleep(10)

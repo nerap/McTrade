@@ -14,8 +14,8 @@ MIN_QUANTITY = 5
 MAX_RISK = 25
 MIN_RISK = 3
 DEFAULT_RISK = 5
-DEFAULT_INTERVAL = "15m"
-DEFAULT_LOOKBACK = "7 day ago UTC"
+DEFAULT_INTERVAL = "1d"
+DEFAULT_LOOKBACK = "180 day ago UTC"
 bot = sys.argv[0]
 url_binance_ticker_price = "https://api.binance.com/api/v3/ticker/price?symbol="
 
