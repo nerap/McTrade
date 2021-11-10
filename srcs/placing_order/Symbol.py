@@ -41,10 +41,10 @@ class Symbol:
 
         self.mutex = mutex
         self.client = client
-        self.symbol = config['symbol']
-        self.coin = config['symbol'][:-4]
+        self.symbol = config['SYMBOL']
+        self.coin = config['SYMBOL'][:-4]
         self.quote = 'USDT'
-        self.quantity = config['quantity']
+        self.quantity = int(config['QUANTITY'])
         self.get_last_open_position()
         self.mutex.acquire()
 
@@ -58,10 +58,10 @@ class Symbol:
 
         # For know the quote value is USDT so we know the exact precision
         self.quote_floor_precision = 2
-        self.interval = config['interval']
-        self.lookback = config['lookback']
-        self.interval_validate = config['interval_validate']
-        self.lookback_validate = config['lookback_validate']
+        self.interval = config['INTERVAL']
+        self.lookback = config['LOOKBACK']
+        self.interval_validate = config['INTERVAL_VALIDATE']
+        self.lookback_validate = config['LOOKBACK_VALIDATE']
     
     # Connect to Binance API with a Client
 
@@ -218,7 +218,7 @@ class Symbol:
             self.open_position_quantity = quantity
         try:
             # Placing an order with Binance API return a json object
-            order = self.client.create_order(symbol=self.symbol, side=side, type=order_type, quantity=quantity)    
+            order = self.client.create_order(symbol=self.symbol, side=side, type=order_type, quantity=quantity)
         except BinanceAPIException as e:
             self.mutex.release()
             print(e)
@@ -243,6 +243,7 @@ class Symbol:
     def buy_sell(self):
         self.data_frame['Buy'] = 0
         self.data_frame['Sell'] = 0
+        
         flag = -1
         
         for i in range(26, len(self.data_frame)):
