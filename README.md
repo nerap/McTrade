@@ -127,16 +127,13 @@ The configuration is inspired by nginx configuration file format. The parser can
 This is really nginx but in caps lock, don't try to break the parser or add useless things, the configuration file is really straight foward.
  
  ```nginx
-    # DON'T MODIFY THIS IF YOU HAVE NO IDEA HOW THE CODE IS WORKING
     MAX_QUANTITY 100;
     MIN_QUANTITY 5;
     DEFAULT_INTERVAL 1d;
     DEFAULT_LOOKBACK 180 day ago UTC;
     DEFAULT_INTERVAL_VALIDATE 6h;
     DEFAULT_LOOKBACK_VALIDATE 7 day ago UTC;
-
-    # What you will modify as your will
-    
+   
     SYMBOL {
        SYMBOL ETHUSDT;
        QUANTITY 33;
