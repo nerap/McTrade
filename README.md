@@ -42,6 +42,8 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+    <li><a href="#output">Output</a></li>
+    <li><a href="#configuration">Configuration</a></li>
     <li><a href="#strategy">Strategy</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
@@ -123,6 +125,33 @@ Default config files are in config_file/ directory
  ```sh
    python3 McTrady.py -f config_files/basic_config.conf
    ```
+
+### Output
+
+If you set up your configuration file correctly you will this an output like this: 
+
+ ```sh
+                    XRPUSDT
+
+    Close -> 1.1913
+    Open Position -> False
+    Macd 1d -> 0.036 Signal 1d -> 0.029
+    Macd 6h -> 0.012 Signal 6h -> 0.018
+ ```
+
+**Every 10 seconds, you will see those informations on each crypto meaning that McTrade is working and currently looking to place an order.**
+
+Those value will depends on the crypto you want to trade of course !
+Open Position variable will tell you if your bot want to buy or want to sell, (False means he wants to buy, True means he wants to sell).
+
+I didn't implement a trade history, but you have already have a beautiful one on Binance App.
+
+**You really want to him to be working 24/7 so I recommend you to have a server, or letting your PC always on. If you want to use it on a server take a look a [this](https://askubuntu.com/questions/8653/how-to-keep-processes-running-after-ending-ssh-session).**
+
+I will soon add a Docker File making things a bit easier.
+
+
+### Configuration
 
 The configuration is inspired by nginx configuration file format. The parser can be found [there](https://pypi.org/project/nginxparser_eb/)
 This is really nginx but in caps lock, don't try to break the parser or add useless things, the configuration file is really straight foward.
