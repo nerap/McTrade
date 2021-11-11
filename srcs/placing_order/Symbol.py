@@ -266,14 +266,16 @@ class Symbol:
         # Applying Buy and Sell columns to decide wether or not we should place an order
 
         self.buy_sell()
-        # Printing last row of the data frame
 
+        # Printing last row of the data frame
+        self.mutex.acquire()
         print('\n------------------------------------------\n')
         print("\t\t" + self.symbol + '\n')
         print("Close -> " + str(self.data_frame.Close.iloc[-1]))
         print("Open Position -> " + str(self.open_position))
         print("Macd " + self.interval + " -> " + str(round(self.data_frame.Macd.iloc[-1], 3)) + " Signal " + self.interval + " -> " + str(round(self.data_frame.Signal.iloc[-1], 3)))
         print("Macd " + self.interval_validate + " -> " + str(round(self.data_frame_validate.Macd.iloc[-1], 3)) + " Signal " + self.interval_validate + " -> " + str(round(self.data_frame_validate.Signal.iloc[-1], 3)))
+        self.mutex.release()
 
         # Making sure if we are not in open_position and we want to place an order with .Buy or .Sell
         if self.open_position == False and (self.data_frame.Buy.iloc[-1] or self.data_frame.Buy.iloc[-2]) and self.check_price(Client.SIDE_BUY):
